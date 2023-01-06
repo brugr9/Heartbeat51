@@ -46,8 +46,6 @@ An Unreal Engine project as Proof of Concept for receiving physiological data fr
 
 ## 1. Concept
 
-***For reasons of health data protection, AAC data is transmitted here instead of ECG data. Of course, ECG data can also be transmitted in the same way.***
-
 *Listing 1.1.: General Data Flow*
 > **Data Producer** &mdash;(*MQTT*)&rarr; **MQTT-Broker** &mdash;(*MQTT*)&rarr; **MQTT-Client**
 
@@ -98,10 +96,10 @@ Blueprint `BP_PSL_Demo` has variables:
 * MQTT Subscription Object Reference `MqttSubscription`
 * String `Topic`, Default Value set to `psl`
 
-On BeginPlay the MQTT Client is crated and connected. If the connection was accepted, the subscription to topic `psl` is made. `OnMessage` the received MQTTClientMessage Payload is evaluated (see Event Graph in figure 2.4.).
+On BeginPlay the MQTT Client is crated and connected. If the connection was accepted, the topic `psl` is subscribed. `OnMessage` the received MQTTClientMessage Payload is evaluated (see figure 2.4.).
 
 ![MQTTSubscription-BP_PSL_Demo](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
-*Figure 2.4.: BP_PSL_Demo, Graph Editor*
+*Figure 2.4.: BP_PSL_Demo, Event Graph*
 
 <div style='page-break-after: always'></div>
 
