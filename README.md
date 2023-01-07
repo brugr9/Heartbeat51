@@ -12,7 +12,7 @@ Unreal Engine 5.1 Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
 ## Description
 
-An Unreal&reg; Engine project using plugin "MQTT" for receiving physiological data from Polar&reg; H10 heart rate monitor.
+An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor via MQTT.
 
 * Index Terms: Sports Performance, Physiological Measuring, Electrocardiogram (ECG), Heart Rate (HR), Integration, Messaging, Internet of Things (IOT), Machine to Machine (M2M)
 * Technology: Polar&reg; H10 HR Sensor with Chest Strap, Bluetooth&reg; Low Energy (BLE), Polar Sensor Logger (PSL), Message Queuing Telemetry Transport (MQTT), Wireshark, Unreal&reg; Engine
@@ -27,7 +27,7 @@ An Unreal&reg; Engine project using plugin "MQTT" for receiving physiological da
 
 * [1. Concept](#1-concept)
 * [2. Unreal Engine](#2-unreal-engine)
-  * [2.1. Enable Plugin](#21-enable-plugin)
+  * [2.1. Enable Plugin MQTT](#21-enable-plugin-mqtt)
   * [2.2. MQTT Subscription](#22-mqtt-subscription)
 * [3. Mosquitto](#3-mosquitto)
 * [4. Polar Sensor Logger](#4-polar-sensor-logger)
@@ -71,7 +71,7 @@ The following shows the setup in reverse order of the data flow: Unreal Engine a
 
 ## 2. Unreal Engine
 
-### 2.1. Enable Plugin
+### 2.1. Enable Plugin MQTT
 
 1. Open a new UE Project, name it , e.g., "Heartbeat"
 2. Activate Plugin "MQTT"
