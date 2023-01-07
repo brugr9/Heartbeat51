@@ -1,4 +1,4 @@
-# Unreal Engine 5.1 Project "Heartbeat"
+# Unreal Engine 5.1 Project "Heartbeat" &ndash; README
 
 * Author: Copyright 2023 Roland Bruggmann aka brugr9
 * Profile on UE Marketplace: [https://www.unrealengine.com/marketplace/profile/brugr9](https://www.unrealengine.com/marketplace/profile/brugr9)
