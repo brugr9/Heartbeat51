@@ -33,7 +33,7 @@ An Unreal&reg; Engine project using plugin "MQTT" for receiving physiological da
 * [4. Polar Sensor Logger](#4-polar-sensor-logger)
   * [4.1. Setup Android Debug Bridge](#41-setup-android-debug-bridge)
   * [4.2. Setup Polar Sensor Logger](#42-setup-polar-sensor-logger)
-* [5. Monitoring](#5-monitoring)
+* [5. Wireshark](#5-wireshark)
 * [6. Data Visualisation](#6-data-visualisation)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
@@ -186,9 +186,9 @@ ADB answers with:
 
 <div style='page-break-after: always'></div>
 
-## 5. Monitoring
+## 5. Wireshark
 
-Use Wireshark to monitor PSL for sending its MQTT messages over port 1883 (cp. [5] and [6], see Listing 5.1. and Figure 5.1.).
+We use Wireshark to monitor PSL for sending its MQTT messages over port 1883 (cp. [5] and [6], see Listing 5.1. and Figure 5.1.).
 
 *Listing 5.1.: Wireshark Filter TCP Port 1883*
 ```
