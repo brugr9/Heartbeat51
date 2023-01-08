@@ -1,4 +1,4 @@
-# Unreal Engine 5.1 Project "Heartbeat" &ndash; README
+# Unreal Engine Project "Heartbeat" &ndash; README
 
 * Author: Copyright 2023 Roland Bruggmann aka brugr9
 * Profile on UE Marketplace: [https://www.unrealengine.com/marketplace/profile/brugr9](https://www.unrealengine.com/marketplace/profile/brugr9)
@@ -8,14 +8,14 @@
 
 ![UEProjectHeartbeat-EpicGamesLauncher](Docs/UEProjectHeartbeat-EpicGamesLauncher.png "UEProjectHeartbeat-EpicGamesLauncher")
 
-Unreal Engine 5.1 Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
+Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
 ## Description
 
 An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor via MQTT.
 
-* Index Terms: Sports Performance, Physiological Measuring, Electrocardiogram (ECG), Heart Rate (HR), Integration, Messaging, Internet of Things (IOT), Machine to Machine (M2M)
-* Technology: Polar&reg; H10 HR Sensor with Chest Strap, Bluetooth&reg; Low Energy (BLE), Polar Sensor Logger (PSL), Message Queuing Telemetry Transport (MQTT), Wireshark, Unreal&reg; Engine
+* Index Terms: Physiological Measuring, Electrocardiogram (ECG), Heart Rate (HR), Integration, Messaging, Internet of Things (IOT), Machine to Machine (M2M)
+* Technology: Polar H10 HR Sensor with Chest Strap, Bluetooth&reg; Low Energy (BLE), Android&trade;, Polar Sensor Logger (PSL), Message Queuing Telemetry Transport (MQTT), Windows&trade;, PowerShell&trade; (PS), Chocolatey, Android Debug Bridge (ADB), Mosquitto&trade;, Wireshark&trade;, Unreal Engine (UE)
 
 ---
 
@@ -27,7 +27,7 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
 
 * [1. Concept](#1-concept)
 * [2. Unreal Engine](#2-unreal-engine)
-  * [2.1. Enable Plugin MQTT](#21-enable-plugin-mqtt)
+  * [2.1. Plugin MQTT](#21-plugin-mqtt)
   * [2.2. MQTT Subscription](#22-mqtt-subscription)
 * [3. Mosquitto](#3-mosquitto)
 * [4. Polar Sensor Logger](#4-polar-sensor-logger)
@@ -57,25 +57,23 @@ We implement a general data flow as shown in listing 1.1.
 We use system components as follows (for the specific data flow see Listing 1.2.):
 
 * Data Producer:
-  * Polar&reg; H10 Heart Rate (HR) Sensor with Chest Strap (cp. [0])
-  * Polar Sensor Logger (PSL) Android&trade; App (cp. [1])
+  * Polar H10 Heart Rate (HR) Sensor with Chest Strap (cp. [0])
+  * Polar Sensor Logger (PSL) Android App (cp. [1])
 * Mosquitto MQTT-Broker as a Windows Service (cp. [2])
-* MQTT-Client from Unreal Engine (UE) IOT-plugin "MQTT"
+* MQTT-Client from Unreal Engine IOT-plugin "MQTT"
 
 *Listing 1.2.: Specific Data Flow*
 > Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; **Unreal Engine**
 
-The following shows the setup in reverse order of the data flow: Unreal Engine and Polar Sensor Logger. Finally we monitor the messages using Wireshark&trade; and visualise the data in the Unreal Editor.
+The following shows the setup in reverse order of the data flow: Unreal Engine, Mosquitto and Polar Sensor Logger. Finally we monitor the messages using Wireshark and visualise the data in the Unreal Editor.
 
 <div style='page-break-after: always'></div>
 
 ## 2. Unreal Engine
 
-### 2.1. Enable Plugin MQTT
+### 2.1. Plugin MQTT
 
-1. Open a new UE Project, name it , e.g., "Heartbeat"
-2. Activate Plugin "MQTT"
-3. Restart the UE Project
+The UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.1.).
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.1.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
@@ -110,18 +108,16 @@ On BeginPlay the MQTT Client is crated and connected. If the connection was acce
 
 ## 3. Mosquitto
 
-Install Mosquitto MQTT Broker (cp. [2]).
-
-In the firewall allow TCP port 1883, e.g. using PowerShell on Windows:
+Install Mosquitto MQTT-Broker (cp. [2]). In the firewall allow TCP port 1883, e.g., by using an _administrative PowerShell_ on Windows:
 
 ```PowerShell
 New-NetFirewallRule -DisplayName "ALLOW TCP PORT 1883" -Direction inbound -Profile Any -Action Allow -LocalPort 1883 -Protocol TCP
 ```
 
-Startup Mosquitto Windows Service (see figure 3.1.).
+Startup the Windows Service "Mosquitto Broker" (see figure 3.1.).
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
-*Figure 3.1.: Screenshot Mosquitto Broker as Windows Service*
+*Figure 3.1.: Mosquitto Broker as Windows Service*
 
 <div style='page-break-after: always'></div>
 
@@ -140,7 +136,7 @@ On the Android enable USB Debugging mode (cp. [3]):
 
 On the PC:
 
-Ensure you have setup _Android Debug Bridge_, e.g., by _Chocolatey_ in an _administrative PowerShell_:
+Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey in an _administrative PowerShell_:
 
 ```ps
 choco install adb
@@ -188,7 +184,7 @@ ADB answers with:
 
 ## 5. Wireshark
 
-We use Wireshark to monitor PSL for sending its MQTT messages over port 1883 (cp. [5] and [6], see Listing 5.1. and Figure 5.1.).
+We make use of Wireshark to monitor PSL for sending its MQTT messages over port 1883 (cp. [5] and [6], see Listing 5.1. and Figure 5.1.).
 
 *Listing 5.1.: Wireshark Filter TCP Port 1883*
 ```
@@ -238,13 +234,16 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 
 ### Acronyms
 
+* ADB &mdash; Android Debug Bridge
 * BLE &mdash; Bluetooth Low Energy
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
 * IOT &mdash; Internet of Things
 * M2M &mdash; Machine to Machine
 * MQTT &mdash; Message Queuing Telemetry Transport
-* POC &mdash; Proof of Concept
+* PIE &mdash; Play-in-Editor
+* POC &mdash; Proof-of-Concept
+* PS &mdash; PowerShell
 * PSL &mdash; Polar Sensor Logger
 * UE &mdash; Unreal Engine
 
@@ -254,7 +253,8 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * The word mark Polar and its logos are trademarks of Polar Electro Oy.
 * Android is a trademark of Google LLC.
 * The Bluetooth word mark and logos are registered trademarks owned by Bluetooth SIG, Inc.
-* PowerShell and Windows are registered trademarks of Microsoft Corporation.
+* Windows and PowerShell are registered trademarks of Microsoft Corporation.
+* TODO: Chocolatey
 * Mosquitto is a registered trade mark of the Eclipse Foundation.
 * Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation (cp. Legal Information, Online: [https://www.wireshark.org/about.html](https://www.wireshark.org/about.html)).
 * OASIS Message Queuing Telemetry Transport (MQTT) TC, Online: [https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt)
@@ -262,17 +262,18 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 
 ### B. References
 
-* [0] Polar Electro: ***Polar H10***. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
-* [1] Jukka Happonen: ***Polar Sensor Logger***. App on Google Play, Online: [https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger)
-* [2] ***Eclipse Mosquitto&trade;*** &ndash; An open source MQTT broker. Online: [https://mosquitto.org/](https://mosquitto.org/)
-* [3] Skanda Hazarika: ***How to Install ADB on Windows, macOS, and Linux***. July 28, 2021. In: XDA Developers. Online: [https://www.xda-developers.com/install-adb-windows-macos-linux](https://www.xda-developers.com/install-adb-windows-macos-linux)
-* [4] Tushar Sadhwani: ***Connecting Android Apps to localhost, Simplified***. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
-* [5] Wireshark Documentation: ***Display Filter Reference: MQ Telemetry Transport Protocol***, Online: [https://www.wireshark.org/docs/dfref/m/mqtt.html](https://www.wireshark.org/docs/dfref/m/mqtt.html)
-* [6] Abhinaya Balaji: ***Dissecting MQTT using Wireshark***. In: Blog Post, July 6, 2017. Catchpoint Systems, Inc. Online: [https://www.catchpoint.com/blog/wireshark-mqtt](https://www.catchpoint.com/blog/wireshark-mqtt)
+* [0] Polar Electro: **Polar H10**. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
+* [1] Jukka Happonen: **Polar Sensor Logger**. App on Google Play, Online: [https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger)
+* [2] **Eclipse Mosquitto** &ndash; An open source MQTT broker. Online: [https://mosquitto.org/](https://mosquitto.org/)
+* TODO: Chocolatey
+* [3] Skanda Hazarika: **How to Install ADB on Windows, macOS, and Linux**. July 28, 2021. In: XDA Developers. Online: [https://www.xda-developers.com/install-adb-windows-macos-linux](https://www.xda-developers.com/install-adb-windows-macos-linux)
+* [4] Tushar Sadhwani: **Connecting Android Apps to localhost, Simplified**. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
+* [5] Wireshark Documentation: **Display Filter Reference: MQ Telemetry Transport Protocol**, Online: [https://www.wireshark.org/docs/dfref/m/mqtt.html](https://www.wireshark.org/docs/dfref/m/mqtt.html)
+* [6] Abhinaya Balaji: **Dissecting MQTT using Wireshark**. In: Blog Post, July 6, 2017. Catchpoint Systems, Inc. Online: [https://www.catchpoint.com/blog/wireshark-mqtt](https://www.catchpoint.com/blog/wireshark-mqtt)
 
 ### C. Readings
 
-* Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). ***Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming***. In Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
+* Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). **Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming**. In: Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
 
 <div style='page-break-after: always'></div>
 
