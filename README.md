@@ -139,9 +139,8 @@ Blueprint `BP_PSL_Demo` has Actor-Components (see figure 2.4.):
 
 Blueprint `BP_PSL_Demo` has variables (see figure 2.5.):
 
-* MQTT Client Object Reference `MqttClient`
-* MQTT Subscription Object Reference `MqttSubscription`
-* String `Topic`, Default Value set to `psl/hr`
+* String `MyTopic`, default value set to `psl/hr`
+* MQTT Client Object Reference `MyClient`
 
 ![MQTTSubscription-BP_PSL_Demo](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
 *Figure 2.5.: BP_PSL_Demo, Event Graph*
