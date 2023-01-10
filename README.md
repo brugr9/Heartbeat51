@@ -107,6 +107,8 @@ tcp.port == 1883
 ![Wireshark Dissecting Port 1883](Docs/Screenshot-Wireshark-1883.png)
 *Figure 2.1.: Wireshark Dissecting Port 1883*
 
+<div style='page-break-after: always'></div>
+
 ### 2.3. Unreal Engine
 
 Clone UE project "Heartbeat51" using git, e.g., by ```git clone https://github.com/brugr9/Heartbeat51.git``` and startup the project.
@@ -125,6 +127,8 @@ Map `Map_PSL_Demo` holds a Blueprint instance `BP_PSL_Demo` (see figure 2.3.).
 ![Map_PSL_Demo with BP_PSL_Demo instance also seen in the Outliner](Docs/UEProjectHeartbeat-MQTTSubscription-Map_PSL_Demo.png)
 *Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo instance also seen in the Outliner*
 
+<div style='page-break-after: always'></div>
+
 Blueprint `BP_PSL_Demo` has Actor-Components (see figure 2.4.):
 
 * Static Mesh Component `Heart`
@@ -133,16 +137,32 @@ Blueprint `BP_PSL_Demo` has Actor-Components (see figure 2.4.):
 ![BP_PSL_Demo TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
 *Figure 2.4.: BP_PSL_Demo, Actor-Component TextRender*
 
-Blueprint `BP_PSL_Demo` has variables:
+Blueprint `BP_PSL_Demo` has variables (see figure 2.5.):
 
 * MQTT Client Object Reference `MqttClient`
 * MQTT Subscription Object Reference `MqttSubscription`
-* String `Topic`, Default Value set to `psl`
-
-On BeginPlay the MQTT Client is crated and connected. If the connection was accepted, the topic `psl` is subscribed. `OnMessage` the received MQTTClientMessage Payload is evaluated (see figure 2.5.).
+* String `Topic`, Default Value set to `psl/hr`
 
 ![MQTTSubscription-BP_PSL_Demo](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
 *Figure 2.5.: BP_PSL_Demo, Event Graph*
+
+<div style='page-break-after: always'></div>
+
+On BeginPlay the MQTT Client is crated and connected. If the connection was accepted, the topic is subscribed. `OnMessage` the received MQTTClientMessage Payload (cp. listing 2.4.) is evaluated.
+
+*Listing 2.4.: Topic psl/hr JSON-Payload*
+```json
+{
+    "clientId": "MyPSL-01",
+    "deviceId": "12345678",
+    "sessionId": 1673369229,
+    "timeStamp": 1673369503448,
+    "hr": 64,
+    "rr": [
+        833
+    ]
+}
+```
 
 <div style='page-break-after: always'></div>
 
@@ -169,20 +189,20 @@ On the Android enable USB Debugging mode (cp. [7]):
 On the PC setup Android Debug Bridge ADB (cp. [7]):
 
 1. Launch an administrative PowerShell.
-2. Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey packet manager (cp. [3], see listing 2.4.).
-3. Start the Android Debug Bridge and map TCP port 1883 bidirectional (cp. [8], see listing 2.5. and listing 2.6.).
+2. Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.).
+3. Start the Android Debug Bridge and map TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.).
 
-*Listing 2.4.: Use of Chocolatey to Install ADB*
+*Listing 2.5.: Use of Chocolatey to Install ADB*
 ```PowerShell
 choco install adb
 ```
 
-*Listing 2.5.: ADB Startup*
+*Listing 2.6.: ADB Startup*
 ```PowerShell
 adb reverse tcp:1883 tcp:1883
 ```
 
-*Listing 2.6.: ADB Startup Feedback*
+*Listing 2.7.: ADB Startup Feedback*
 ```PowerShell
 * daemon not running; starting now at tcp:5037
 * daemon started successfully
@@ -205,7 +225,7 @@ adb reverse tcp:1883 tcp:1883
          * MQTT-broker address: `127.0.0.1`
          * Port: `1883`
          * Topic: `psl`
-         * Client ID: e.g. `mqtt-psl-1`
+         * Client ID: e.g. `MyPSL-01`
        * 2. Hit `OK`
      * 3. Hit `Seek Sensor`, select listed sensor `Polar H10 12345678` (ID will differ), hit `OK`  (cp. figure 2.9.)
 
@@ -221,6 +241,8 @@ In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658;
 
 TODO:![Animation Screenshot of Map_PSL_Demo PIE](Docs/MapPSLDemoPIE.gif)
 *Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE*
+
+<div style='page-break-after: always'></div>
 
 TODO:*Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```log
@@ -282,6 +304,8 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * OASIS Message Queuing Telemetry Transport (MQTT) TC, Online: [https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt)
 * 3D Model "Heart" ([https://skfb.ly/CCyL](https://skfb.ly/CCyL)) by phenopeia is licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
 
+<div style='page-break-after: always'></div>
+
 ### B. References
 
 * [1] Polar Electro: **Polar H10**. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
@@ -292,6 +316,7 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * [6] **Eclipse Mosquitto** &ndash; An open source MQTT broker. Online: [https://mosquitto.org/](https://mosquitto.org/)
 * [7] Skanda Hazarika: **How to Install ADB on Windows, macOS, and Linux**. July 28, 2021. In: XDA Developers. Online: [https://www.xda-developers.com/install-adb-windows-macos-linux](https://www.xda-developers.com/install-adb-windows-macos-linux)
 * [8] Tushar Sadhwani: **Connecting Android Apps to localhost, Simplified**. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
+* [9] HiveMQ: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
 
 ### C. Readings
 
