@@ -177,20 +177,21 @@ Install Mosquitto MQTT-Broker (cp. [6]) and startup the Windows Service "Mosquit
 
 ### 2.5. Android Debug Bridge
 
-On the Android enable USB Debugging mode (cp. [7]):
+On the Android device enable USB Debugging mode (cp. [7]):
 
 1. Launch the `Settings` application.
 2. Tap the `About Phone` option (generally found near the bottom of the list).
 3. Then tap the `Build Number` option _7 times_ to enable _Developer Mode_. You will see a toast message when it is done.
 4. Now go back to the main `Settings` screen and you should see a new `Developer Options` menu you can access.
 5. Go in there and enable the `USB Debugging` mode option.
-6. Allow `USB Debugging prompt` on Android
+6. Connect the Android device to the PC by USB cable.
 
 On the PC setup Android Debug Bridge ADB (cp. [7]):
 
 1. Launch an administrative PowerShell.
-2. Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.).
-3. Start the Android Debug Bridge and map TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.).
+   1. Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.).
+   2. Start the Android Debug Bridge and map TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.).
+2. Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
 
 *Listing 2.5.: Use of Chocolatey to Install ADB*
 ```PowerShell
@@ -212,22 +213,23 @@ adb reverse tcp:1883 tcp:1883
 
 ### 2.6. Polar Sensor Logger
 
-1. On the Android device install the "Polar Sensor Logger" (PSL) App (cp. [2])
-2. Mount the Polar H10 sensor on the chest strap and wear the same.
-3. Connect the Android device by USB to PC, prompt "Allow USB Debugging" > OK
-4. On the Android device ...
-   * 1. Activate Bluetooth
-   * 2. Activate Location Service
-   * 3. Start-up the "Polar Sensor Logger" App
-     * 1. Under *"SDK data select:"* check `ECG` solely (cp. figure 2.7.)
-     * 2. Under *"Settings:"* check `MQTT` solely (cp. figure 2.7.)
-       * 1. In the pop-up *"MQTT-serttings"* configure (cp. figure 2.8.)
+Mount the Polar H10 sensor on the chest strap and wear the same. On the Android device ...
+
+1. Install the "Polar Sensor Logger" App (cp. [2])
+2. Activate Bluetooth
+3. Activate Location Service
+4. Launch the "Polar Sensor Logger" App
+   1. Under "SDK data select:" check `ECG` solely (cp. figure 2.7.).
+   2. Under "Settings:" check `MQTT` solely (cp. figure 2.7.).
+      * In the pop-up "MQTT-serttings" configure (cp. figure 2.8.):
          * MQTT-broker address: `127.0.0.1`
          * Port: `1883`
          * Topic: `psl`
          * Client ID: e.g. `MyPSL-01`
-       * 2. Hit `OK`
-     * 3. Hit `Seek Sensor`, select listed sensor `Polar H10 12345678` (ID will differ), hit `OK`  (cp. figure 2.9.)
+      * Hit `OK`
+   3. Hit `SEEK SENSOR`
+      * select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.9.)
+      * Hit `OK`
 
 ![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![/PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png)
 :-------------------------:|:-------------------------:|:-------------------------:
