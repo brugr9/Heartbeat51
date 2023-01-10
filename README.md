@@ -109,9 +109,11 @@ tcp.port == 1883
 
 ### 2.3. Unreal Engine
 
+Clone UE project "Heartbeat51" using git, e.g., by ```git clone https://github.com/brugr9/Heartbeat51.git``` and startup the project.
+
 #### 2.3.1. Plugin MQTT
 
-The UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: The plugin is not documented yet (as of UE 5.1, January 2023).
+The UE project "Heartbeat51" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is not yet documented.
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.2.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
