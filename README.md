@@ -19,7 +19,7 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * Integration, Messaging, Internet of Things (IOT), Machine to Machine (M2M)
 * Technology:
   * Unreal&reg; Engine (UE), Polar&reg; H10 HR Sensor with Chest Strap, Polar&reg; Sensor Logger (PSL)
-  * Bluetooth&reg; Low Energy (BLE), Message Queuing Telemetry Transport (MQTT)
+  * Bluetooth&reg; Low Energy (BLE), Message Queuing Telemetry Transport (MQTT), JSON
   * Mosquitto&trade;, Wireshark&trade;, Android&trade; Debug Bridge (ADB)
   * Windows&trade; PowerShell&trade; (PS), Chocolatey Package Manager
 
@@ -149,9 +149,9 @@ Blueprint `BP_PSL_Demo` has variables (see figure 2.5.):
 
 <div style='page-break-after: always'></div>
 
-On BeginPlay the MQTT Client is crated and connected. If the connection was accepted, the topic is subscribed. `OnMessage` the received MQTTClientMessage Payload (cp. listing 2.4.) is evaluated.
+`OnBeginPlay` an MQTT-Client is crated and connected. If the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated (cp. listing 2.4.).
 
-*Listing 2.4.: Topic psl/hr JSON-Payload*
+*Listing 2.4.: Topic psl/hr, example Payload in JSON*
 ```json
 {
     "clientId": "MyPSL-01",
@@ -286,6 +286,7 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
 * IOT &mdash; Internet of Things
+* JSON &mdash; JavaScript Object Notation
 * M2M &mdash; Machine to Machine
 * MQTT &mdash; Message Queuing Telemetry Transport
 * PIE &mdash; Play-in-Editor
