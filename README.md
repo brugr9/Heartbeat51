@@ -44,11 +44,13 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
 * [3. Visualisation](#3-visualisation)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
+  * [Glossary](#glossary)
   * [A. Attribution](#a-attribution)
-  * [B. References](#b-references)
-  * [C. Readings](#c-readings)
-  * [D. Citation](#d-citation)
-  * [E. Disclaimer](#e-disclaimer)
+  * [B. Acknowledgements](#b-acknowledgements)
+  * [C. References](#c-references)
+  * [D. Readings](#d-readings)
+  * [E. Citation](#e-citation)
+  * [F. Disclaimer](#f-disclaimer)
 
 <!-- End Document Outline -->
 
@@ -290,7 +292,30 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * POC &mdash; Proof-of-Concept
 * PS &mdash; PowerShell
 * PSL &mdash; Polar Sensor Logger
+* QoS &mdash; Quality of Service
 * UE &mdash; Unreal Engine
+
+### Glossary
+
+#### Quality of Service QoS
+
+> The Quality of Service (QoS) level is an agreement between the sender of a message and the receiver of a message that defines the guarantee of delivery for a specific message. There are 3 QoS levels in MQTT:
+>
+> * At most once (0)
+> * At least once (1)
+> * Exactly once (2).
+>
+> When you talk about QoS in MQTT, you need to consider the two sides of message delivery:
+>
+> * Message delivery form the publishing client to the broker.
+> * Message delivery from the broker to the subscribing client.
+>
+> We will look at the two sides of the message delivery separately because there are subtle differences between the two. The client that publishes the message to the broker defines the QoS level of the message when it sends the message to the broker. The broker transmits this message to subscribing clients using the QoS level that each subscribing client defines during the subscription process. If the subscribing client defines a lower QoS than the publishing client, the broker transmits the message with the lower quality of service.
+(Source: cp. [9])
+
+#### Retain
+
+Retained messages only appear to be retained, when a client subscribes after the initial publish.
 
 ### A. Attribution
 
@@ -303,11 +328,14 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * Mosquitto is a registered trade mark of the Eclipse Foundation.
 * Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation (cp. Legal Information, Online: [https://www.wireshark.org/about.html](https://www.wireshark.org/about.html)).
 * OASIS Message Queuing Telemetry Transport (MQTT) TC, Online: [https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt)
+
+### B. Acknowledgements
+
 * 3D Model "Heart" ([https://skfb.ly/CCyL](https://skfb.ly/CCyL)) by phenopeia is licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
 
 <div style='page-break-after: always'></div>
 
-### B. References
+### C. References
 
 * [1] Polar Electro: **Polar H10**. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
 * [2] Jukka Happonen: **Polar Sensor Logger**. App on Google Play, Online: [https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger)
@@ -319,13 +347,13 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * [8] Tushar Sadhwani: **Connecting Android Apps to localhost, Simplified**. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
 * [9] HiveMQ: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
 
-### C. Readings
+### D. Readings
 
 * Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). **Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming**. In: Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
 
 <div style='page-break-after: always'></div>
 
-### D. Citation
+### E. Citation
 
 To acknowledge this work, please cite
 
@@ -341,7 +369,7 @@ To acknowledge this work, please cite
 }
 ```
 
-### E. Disclaimer
+### F. Disclaimer
 
 This documentation has **not been reviewed or approved** by the *Food and Drug Administration FDA* or by any other agency. It is the users responsibility to ensure compliance with applicable rules and regulations&mdash;be it in the US or elsewhere.
 
