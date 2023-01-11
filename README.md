@@ -1,4 +1,4 @@
-# Unreal Engine Project "Heartbeat" &ndash; README
+# Unreal Engine Project "Heartbeat" &ndash; Readme
 
 * Author: Copyright 2023 Roland Bruggmann aka brugr9
 * Profile on UE Marketplace: [https://www.unrealengine.com/marketplace/profile/brugr9](https://www.unrealengine.com/marketplace/profile/brugr9)
@@ -6,7 +6,7 @@
 
 ---
 
-![UEProjectHeartbeat-EpicGamesLauncher](Docs/UEProjectHeartbeat-EpicGamesLauncher.png "UEProjectHeartbeat-EpicGamesLauncher")
+![UE Project Heartbeat in Epic Games Launcher](Docs/UEProjectHeartbeat-EpicGamesLauncher.png "UE Project Heartbeat in Epic Games Launcher")
 
 Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
@@ -111,11 +111,11 @@ tcp.port == 1883
 
 ### 2.3. Unreal Engine
 
-Clone UE project "Heartbeat51" using git, e.g., by ```git clone https://github.com/brugr9/Heartbeat51.git``` and startup the project.
+Clone UE project "Heartbeat" using git, e.g., by ```git clone https://github.com/brugr9/Heartbeat51.git``` and startup the project.
 
 #### 2.3.1. Plugin MQTT
 
-The UE project "Heartbeat51" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is not yet documented.
+UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is not yet documented.
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.2.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
@@ -178,21 +178,21 @@ Install Mosquitto MQTT-Broker (cp. [6]) and startup the Windows Service "Mosquit
 
 On the Android device enable USB Debugging mode (cp. [7]):
 
-1. Launch the `Settings` application.
-2. Tap the `About Phone` option (generally found near the bottom of the list).
-3. Then tap the `Build Number` option _7 times_ to enable _Developer Mode_. You will see a toast message when it is done.
-4. Now go back to the main `Settings` screen and you should see a new `Developer Options` menu you can access.
-5. Go in there and enable the `USB Debugging` mode option.
-6. Connect the Android device to the PC by USB cable.
+> 1. Launch the `Settings` application.
+> 2. Tap the `About Phone` option (generally found near the bottom of the list).
+> 3. Then tap the `Build Number` option _7 times_ to enable _Developer Mode_. You will see a toast message when it is done.
+> 4. Now go back to the main `Settings` screen and you should see a new `Developer Options` menu you can access.
+> 5. Go in there and enable the `USB Debugging` mode option.
+> 6. Connect the Android device to the PC by USB cable.
 
-On the PC setup Android Debug Bridge ADB (cp. [7]):
+On the PC setup "Android Debug Bridge" ADB (cp. [7]):
 
-1. Launch an administrative PowerShell.
-   1. Ensure you have setup Android Debug Bridge, e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.).
-   2. Start the Android Debug Bridge and map TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.).
+1. Launch an administrative PowerShell
+   1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.)
+   2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.)
 2. Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
 
-*Listing 2.5.: Use of Chocolatey to Install ADB*
+*Listing 2.5.: Use of Chocolatey to Install Android Debug Bridge*
 ```PowerShell
 choco install adb
 ```
@@ -227,7 +227,7 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
          * Client ID: e.g. `MyPSL-01`
       * Hit `OK`
    3. Hit `SEEK SENSOR`
-      * select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.9.)
+      * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.9.)
       * Hit `OK`
 
 ![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![/PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png)
@@ -335,7 +335,8 @@ To acknowledge this work, please cite
 @software{Bruggmann_Heartbeat_2023,
   author = {Bruggmann, Roland},
   year = {2023},
-  title = {{Unreal Engine 5.1 Project 'Heartbeat'}},
+  version = {v5.1.0},
+  title = {{Unreal Engine Project 'Heartbeat'}},
   url = {https://github.com/brugr9/heartbeat51}
 }
 ```
