@@ -45,10 +45,10 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
-  * [A. Attribution](#a-attribution)
-  * [B. Acknowledgements](#b-acknowledgements)
-  * [C. References](#c-references)
-  * [D. Readings](#d-readings)
+  * [A. References](#a-references)
+  * [B. Readings](#b-readings)
+  * [C. Acknowledgements](#c-acknowledgements)
+  * [D. Attribution](#d-attribution)
   * [E. Citation](#e-citation)
   * [F. Disclaimer](#f-disclaimer)
 
@@ -124,10 +124,10 @@ UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.)
 
 #### 2.3.2. MQTT Subscription
 
-Map `Map_PSL_Demo` holds a Blueprint instance `BP_PSL_Demo` (see figure 2.3.).
+Map `Map_PSL_Demo` holds a Blueprint instance `BP_PSL_Demo` and additionally a TextRenderActor instance, which is assigned as Object Reference to the `BP_PSL_Demo` variable 'TextRender' (see figure 2.3.).
 
-![Map_PSL_Demo with BP_PSL_Demo instance also seen in the Outliner](Docs/UEProjectHeartbeat-MQTTSubscription-Map_PSL_Demo.png)
-*Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo instance also seen in the Outliner*
+![Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
+*Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner*
 
 <div style='page-break-after: always'></div>
 
@@ -135,32 +135,56 @@ Blueprint `BP_PSL_Demo` has components as follows (see figure 2.4.):
 
 * Scene Components:
   * Static Mesh Component `Heart`
-  * Text Render Component `TextRender` with `Text > Text Render Color` set to red
 * Actor Components:
   * Rotating Movement Component
+  * Timeline Component `HeartbeatTimeline`
 
-![BP_PSL_Demo, Text Render Component](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
-*Figure 2.4.: BP_PSL_Demo, Text Render Component*
-
-Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.5.):
+Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.4.):
 
 * String `MyTopic`, default value set to `psl/hr`
 * MQTT-Client Object Reference `MyClient`
 * MQTT-Subscription Object Reference `MySubscription`
+* TextRenderActor Object Reference `TextRender` (public)
 
-`OnBeginPlay` an MQTT-Client is crated and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated.
+![BP_PSL_Demo, Text Render Component](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
+*Figure 2.4.: BP_PSL_Demo, Text Render Component*
 
-![BP_PSL_Demo, Event Graph](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
-*Figure 2.5.: BP_PSL_Demo, Event Graph*
+<div style='page-break-after: always'></div>
+
+Blueprint `BP_PSL_Demo` has events as follows (see figure 2.5.):
+
+* EventBeginPlay, EventEndPlay
+* OnConnect, OnDisconnect, OnMessage
+* HeartbeatStandby, HeartbeatUpdate, HeartbeatDeactivate
+* TextRenderBlink, HeartbeatReset
+
+![BP_PSL_Demo, Event Graph Overview](Docs/UEProjectHeartbeat-BP_PSL_Demo_EventGraph.png)
+*Figure 2.5.: BP_PSL_Demo, Event Graph Overview*
+
+<div style='page-break-after: always'></div>
+
+##### 2.3.2.1. Messaging Setup
+
+On `EventBeginPlay` an MQTT-Client is crated and connected, with `HeartbeatStandby` the HeartMesh starts rotating and the TextRenderActor starts blinking. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated by calling `HeartbeatUpdate` (see figure 2.6.).
+
+![BP_PSL_Demo, Event Graph with Setup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
+*Figure 2.6.: BP_PSL_Demo, Event Graph with Setup*
+
+##### 2.3.2.2. Messaging Teardown
+
+On `EventEndPlay` the topic is unsubscribed and the MQTT-Client is disconnected (see figure 2.7.).
+
+![BP_PSL_Demo, Event Graph with Teardownp](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
+*Figure 2.7.: BP_PSL_Demo, Event Graph with Teardown*
 
 <div style='page-break-after: always'></div>
 
 ### 2.4. Mosquitto
 
-Install Mosquitto MQTT-Broker (cp. [6]) and startup the Windows Service "Mosquitto Broker" (see figure 2.6.).
+Install Mosquitto MQTT-Broker (cp. [6]) and startup the Windows Service "Mosquitto Broker" (see figure 2.8.).
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
-*Figure 2.6.: Mosquitto Broker as Windows Service*
+*Figure 2.8.: Mosquitto Broker as Windows Service*
 
 <div style='page-break-after: always'></div>
 
@@ -208,21 +232,23 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 2. Activate Bluetooth
 3. Activate Location Service
 4. Launch the "Polar Sensor Logger" App
-   1. Under "SDK data select:" check `ECG` solely (cp. figure 2.7.).
-   2. Under "Settings:" check `MQTT` solely (cp. figure 2.7.).
-      * In the pop-up "MQTT-serttings" configure (cp. figure 2.8.):
+   1. Under "SDK data select:" check `ECG` solely (cp. figure 2.9.).
+   2. Under "Settings:" check `MQTT` solely (cp. figure 2.9.).
+      * In the pop-up "MQTT-serttings" configure (cp. figure 2.10.):
          * MQTT-broker address: `127.0.0.1`
          * Port: `1883`
          * Topic: `psl`
          * Client ID: e.g. `MyPSL-01`
       * Hit `OK`
    3. Hit `SEEK SENSOR`
-      * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.9.)
+      * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.11.)
       * Hit `OK`
 
 ![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![/PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png)
 :-------------------------:|:-------------------------:|:-------------------------:
-*Figure 2.7.: PSL, Main Tab* | *Figure 2.8.: PSL, Dialogue "MQTT Settings"* | *Figure 2.9.: PSL, Dialogue "Seek Sensor"*
+*Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"*
+
+<div style='page-break-after: always'></div>
 
 Listing 2.7. shows an example payload of topic `psl/hr` as JSON (size: 173 Bytes), where ```"hr": 64``` corresponds to the heart rate in Beats per Minute (BPM) and ```"rr": [ 833 ]``` corresponds to the R-R interval in Milliseconds.
 
@@ -334,23 +360,7 @@ The R-R interval is an inter-beat interval, more precisely the time elapsed betw
 
 <div style='page-break-after: always'></div>
 
-### A. Attribution
-
-* The word mark Unreal and its logo are Epic Games, Inc. trademarks or registered trademarks in the US and elsewhere.
-* The word mark Polar and its logos are trademarks of Polar Electro Oy.
-* Android is a trademark of Google LLC.
-* The Bluetooth word mark and logos are registered trademarks owned by Bluetooth SIG, Inc.
-* Windows and PowerShell are registered trademarks of Microsoft Corporation.
-* The Chocolatey package manager software and logo are trade marks of Chocolatey Software, Inc.
-* Mosquitto is a registered trade mark of the Eclipse Foundation.
-* Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation.
-
-### B. Acknowledgements
-
-* Logo: "A red heart with a heartbeat to the right", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
-* 3D Model: "Heart", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
-
-### C. References
+### A. References
 
 * [1] Polar Electro: **Polar H10**. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
 * [2] Jukka Happonen: **Polar Sensor Logger**. App on Google Play, Online: [https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger)
@@ -364,11 +374,27 @@ The R-R interval is an inter-beat interval, more precisely the time elapsed betw
 * [10]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval)
 * [11] Mike Cadogan: **R wave Overview**. Feb 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
 
-<div style='page-break-after: always'></div>
-
-### D. Readings
+### B. Readings
 
 * Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). **Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming**. In: Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
+
+<div style='page-break-after: always'></div>
+
+### C. Acknowledgements
+
+* Logo: "A red heart with a heartbeat to the right", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
+* 3D Model: "Heart", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
+
+### D. Attribution
+
+* The word mark Unreal and its logo are Epic Games, Inc. trademarks or registered trademarks in the US and elsewhere.
+* The word mark Polar and its logos are trademarks of Polar Electro Oy.
+* Android is a trademark of Google LLC.
+* The Bluetooth word mark and logos are registered trademarks owned by Bluetooth SIG, Inc.
+* Windows and PowerShell are registered trademarks of Microsoft Corporation.
+* The Chocolatey package manager software and logo are trade marks of Chocolatey Software, Inc.
+* Mosquitto is a registered trade mark of the Eclipse Foundation.
+* Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation.
 
 ### E. Citation
 
