@@ -12,7 +12,7 @@ Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
 ## Description
 
-An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor via MQTT.
+An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor.
 
 * Index Terms:
   * Physiological Measuring, Electrocardiogram (ECG), Heart Rate (HR)
@@ -131,39 +131,27 @@ Map `Map_PSL_Demo` holds a Blueprint instance `BP_PSL_Demo` (see figure 2.3.).
 
 <div style='page-break-after: always'></div>
 
-Blueprint `BP_PSL_Demo` has Actor-Components (see figure 2.4.):
+Blueprint `BP_PSL_Demo` has components as follows (see figure 2.4.):
 
-* Static Mesh Component `Heart`
-* Text Render Component `TextRender` with `Text > Text Render Color` set to red
+* Scene Components:
+  * Static Mesh Component `Heart`
+  * Text Render Component `TextRender` with `Text > Text Render Color` set to red
+* Actor Components:
+  * Rotating Movement Component
 
-![BP_PSL_Demo TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
-*Figure 2.4.: BP_PSL_Demo, Actor-Component TextRender*
+![BP_PSL_Demo, Text Render Component](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
+*Figure 2.4.: BP_PSL_Demo, Text Render Component*
 
-Blueprint `BP_PSL_Demo` has variables (see figure 2.5.):
+Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.5.):
 
 * String `MyTopic`, default value set to `psl/hr`
-* MQTT Client Object Reference `MyClient`
+* MQTT-Client Object Reference `MyClient`
+* MQTT-Subscription Object Reference `MySubscription`
 
-![MQTTSubscription-BP_PSL_Demo](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
+`OnBeginPlay` an MQTT-Client is crated and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated.
+
+![BP_PSL_Demo, Event Graph](Docs/UEProjectHeartbeat-MQTTSubscription-BP_PSL_Demo.png)
 *Figure 2.5.: BP_PSL_Demo, Event Graph*
-
-<div style='page-break-after: always'></div>
-
-`OnBeginPlay` an MQTT-Client is crated and connected. If the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated (cp. listing 2.4.).
-
-*Listing 2.4.: Topic psl/hr, example Payload in JSON*
-```json
-{
-    "clientId": "MyPSL-01",
-    "deviceId": "12345678",
-    "sessionId": 1673369229,
-    "timeStamp": 1673369503448,
-    "hr": 64,
-    "rr": [
-        833
-    ]
-}
-```
 
 <div style='page-break-after: always'></div>
 
@@ -190,21 +178,21 @@ On the Android device enable USB Debugging mode (cp. [7]):
 On the PC setup "Android Debug Bridge" ADB (cp. [7]):
 
 1. Launch an administrative PowerShell
-   1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.5.)
-   2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.6. and listing 2.7.)
+   1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.4.)
+   2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.5. and listing 2.6.)
 2. Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
 
-*Listing 2.5.: Use of Chocolatey to Install Android Debug Bridge*
+*Listing 2.4.: Use of Chocolatey to Install Android Debug Bridge*
 ```PowerShell
 choco install adb
 ```
 
-*Listing 2.6.: ADB Startup*
+*Listing 2.5.: ADB Startup*
 ```PowerShell
 adb reverse tcp:1883 tcp:1883
 ```
 
-*Listing 2.7.: ADB Startup Feedback*
+*Listing 2.6.: ADB Startup Feedback*
 ```PowerShell
 * daemon not running; starting now at tcp:5037
 * daemon started successfully
@@ -235,6 +223,22 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 ![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![/PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png)
 :-------------------------:|:-------------------------:|:-------------------------:
 *Figure 2.7.: PSL, Main Tab* | *Figure 2.8.: PSL, Dialogue "MQTT Settings"* | *Figure 2.9.: PSL, Dialogue "Seek Sensor"*
+
+Listing 2.7. shows an example payload of topic `psl/hr` as JSON (size: 173 Bytes), where ```"hr": 64``` corresponds to the heart rate in Beats per Minute (BPM) and ```"rr": [ 833 ]``` corresponds to the R-R interval in Milliseconds.
+
+*Listing 2.7.: Topic psl/hr, example Payload in JSON*
+```json
+{
+    "clientId": "MyPSL-01",
+    "deviceId": "12345678",
+    "sessionId": 1234567890,
+    "timeStamp": 1234567890123,
+    "hr": 64,
+    "rr": [
+        833
+    ]
+}
+```
 
 <div style='page-break-after: always'></div>
 
@@ -283,8 +287,10 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 
 * ADB &mdash; Android Debug Bridge
 * BLE &mdash; Bluetooth Low Energy
+* BPM &mdash; Beats per Minute
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
+* IBI &mdash; Inter-beat Interval
 * IOT &mdash; Internet of Things
 * JSON &mdash; JavaScript Object Notation
 * M2M &mdash; Machine to Machine
@@ -294,47 +300,55 @@ LogPlayLevel: Display: Shutting down PIE online subsystems
 * PS &mdash; PowerShell
 * PSL &mdash; Polar Sensor Logger
 * QoS &mdash; Quality of Service
+* RRI &mdash; R-R Interval
 * UE &mdash; Unreal Engine
+* USB &mdash; Universal Serial Bus
+
+<div style='page-break-after: always'></div>
 
 ### Glossary
 
 #### Quality of Service QoS
 
-> The Quality of Service (QoS) level is an agreement between the sender of a message and the receiver of a message that defines the guarantee of delivery for a specific message. There are 3 QoS levels in MQTT:
+> *The Quality of Service (QoS) level is an agreement between the sender of a message and the receiver of a message that defines the guarantee of delivery for a specific message. There are 3 QoS levels in MQTT:*
 >
-> * At most once (0)
-> * At least once (1)
-> * Exactly once (2).
+> * *At most once (0)*
+> * *At least once (1)*
+> * *Exactly once (2)*
 >
-> When you talk about QoS in MQTT, you need to consider the two sides of message delivery:
+> *When you talk about QoS in MQTT, you need to consider the two sides of message delivery:*
 >
-> * Message delivery form the publishing client to the broker.
-> * Message delivery from the broker to the subscribing client.
+> * *Message delivery form the publishing client to the broker.*
+> * *Message delivery from the broker to the subscribing client.*
 >
-> We will look at the two sides of the message delivery separately because there are subtle differences between the two. The client that publishes the message to the broker defines the QoS level of the message when it sends the message to the broker. The broker transmits this message to subscribing clients using the QoS level that each subscribing client defines during the subscription process. If the subscribing client defines a lower QoS than the publishing client, the broker transmits the message with the lower quality of service.
-(Source: cp. [9])
+> *We will look at the two sides of the message delivery separately because there are subtle differences between the two. The client that publishes the message to the broker defines the QoS level of the message when it sends the message to the broker. The broker transmits this message to subscribing clients using the QoS level that each subscribing client defines during the subscription process. If the subscribing client defines a lower QoS than the publishing client, the broker transmits the message with the lower quality of service.*
+(HiveMQ, cp. [9])
 
 #### Retain
 
 Retained messages only appear to be retained, when a client subscribes after the initial publish.
 
+#### R-R Interval
+
+The R-R interval is an inter-beat interval, more precisely the time elapsed between two successive R-waves of the QRS signal on the electrocardiogram, in Millisecond (cp. [10] and [11]).
+
+<div style='page-break-after: always'></div>
+
 ### A. Attribution
 
-* The word mark Unreal and its logo are Epic Games, Inc. trademarks or registered trademarks in the US and elsewhere (cp. Branding Guidelines and Trademark Usage, URL: [https://www.unrealengine.com/en-US/branding](https://www.unrealengine.com/en-US/branding)).
+* The word mark Unreal and its logo are Epic Games, Inc. trademarks or registered trademarks in the US and elsewhere.
 * The word mark Polar and its logos are trademarks of Polar Electro Oy.
 * Android is a trademark of Google LLC.
 * The Bluetooth word mark and logos are registered trademarks owned by Bluetooth SIG, Inc.
 * Windows and PowerShell are registered trademarks of Microsoft Corporation.
 * The Chocolatey package manager software and logo are trade marks of Chocolatey Software, Inc.
 * Mosquitto is a registered trade mark of the Eclipse Foundation.
-* Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation (cp. Legal Information, Online: [https://www.wireshark.org/about.html](https://www.wireshark.org/about.html)).
-* OASIS Message Queuing Telemetry Transport (MQTT) TC, Online: [https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt)
+* Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation.
 
 ### B. Acknowledgements
 
-* 3D Model "Heart" ([https://skfb.ly/CCyL](https://skfb.ly/CCyL)) by phenopeia is licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
-
-<div style='page-break-after: always'></div>
+* Logo: "A red heart with a heartbeat to the right", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
+* 3D Model: "Heart", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
 
 ### C. References
 
@@ -346,13 +360,15 @@ Retained messages only appear to be retained, when a client subscribes after the
 * [6] **Eclipse Mosquitto** &ndash; An open source MQTT broker. Online: [https://mosquitto.org/](https://mosquitto.org/)
 * [7] Skanda Hazarika: **How to Install ADB on Windows, macOS, and Linux**. July 28, 2021. In: XDA Developers. Online: [https://www.xda-developers.com/install-adb-windows-macos-linux](https://www.xda-developers.com/install-adb-windows-macos-linux)
 * [8] Tushar Sadhwani: **Connecting Android Apps to localhost, Simplified**. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
-* [9] HiveMQ: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+* [9] HiveMQ Team: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. February 16, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+* [10]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval)
+* [11] Mike Cadogan: **R wave Overview**. Feb 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
+
+<div style='page-break-after: always'></div>
 
 ### D. Readings
 
 * Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). **Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming**. In: Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
-
-<div style='page-break-after: always'></div>
 
 ### E. Citation
 
