@@ -124,10 +124,10 @@ UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.)
 
 #### 2.3.2. MQTT Subscription
 
-Map `Map_PSL_Demo` holds a Blueprint instance `BP_PSL_Demo` and additionally a TextRenderActor instance, which is assigned as Object Reference to the `BP_PSL_Demo` variable 'TextRender' (see figure 2.3.).
+Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable 'TextRender' as Object Reference (see figure 2.3.).
 
-![Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
-*Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner*
+![Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
+*Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport*
 
 <div style='page-break-after: always'></div>
 
@@ -146,8 +146,8 @@ Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.4.):
 * MQTT-Subscription Object Reference `MySubscription`
 * TextRenderActor Object Reference `TextRender` (public)
 
-![BP_PSL_Demo, Text Render Component](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
-*Figure 2.4.: BP_PSL_Demo, Text Render Component*
+![BP_PSL_Demo, Variable TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
+*Figure 2.4.: BP_PSL_Demo, Variable TextRender*
 
 <div style='page-break-after: always'></div>
 
@@ -163,12 +163,12 @@ Blueprint `BP_PSL_Demo` has events as follows (see figure 2.5.):
 
 <div style='page-break-after: always'></div>
 
-##### 2.3.2.1. Messaging Setup
+##### 2.3.2.1. Messaging Startup
 
 On `EventBeginPlay` an MQTT-Client is crated and connected, with `HeartbeatStandby` the HeartMesh starts rotating and the TextRenderActor starts blinking. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated by calling `HeartbeatUpdate` (see figure 2.6.).
 
-![BP_PSL_Demo, Event Graph with Setup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
-*Figure 2.6.: BP_PSL_Demo, Event Graph with Setup*
+![BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
+*Figure 2.6.: BP_PSL_Demo, Event Graph with Startup*
 
 ##### 2.3.2.2. Messaging Teardown
 
@@ -181,7 +181,7 @@ On `EventEndPlay` the topic is unsubscribed and the MQTT-Client is disconnected 
 
 ### 2.4. Mosquitto
 
-Install Mosquitto MQTT-Broker (cp. [6]) and startup the Windows Service "Mosquitto Broker" (see figure 2.8.).
+Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto Broker" (see figure 2.8.).
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
 *Figure 2.8.: Mosquitto Broker as Windows Service*
@@ -194,7 +194,7 @@ On the Android device enable USB Debugging mode (cp. [7]):
 
 > 1. Launch the `Settings` application.
 > 2. Tap the `About Phone` option (generally found near the bottom of the list).
-> 3. Then tap the `Build Number` option _7 times_ to enable _Developer Mode_. You will see a toast message when it is done.
+> 3. Then tap the `Build Number` option *7 times* to enable *Developer Mode*. You will see a toast message when it is done.
 > 4. Now go back to the main `Settings` screen and you should see a new `Developer Options` menu you can access.
 > 5. Go in there and enable the `USB Debugging` mode option.
 > 6. Connect the Android device to the PC by USB cable.
@@ -211,12 +211,12 @@ On the PC setup "Android Debug Bridge" ADB (cp. [7]):
 choco install adb
 ```
 
-*Listing 2.5.: ADB Startup*
+*Listing 2.5.: Android Debug Bridge Startup*
 ```PowerShell
 adb reverse tcp:1883 tcp:1883
 ```
 
-*Listing 2.6.: ADB Startup Feedback*
+*Listing 2.6.: Android Debug Bridge Feedback*
 ```PowerShell
 * daemon not running; starting now at tcp:5037
 * daemon started successfully
@@ -231,9 +231,9 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 1. Install the "Polar Sensor Logger" App (cp. [2])
 2. Activate Bluetooth
 3. Activate Location Service
-4. Launch the "Polar Sensor Logger" App
-   1. Under "SDK data select:" check `ECG` solely (cp. figure 2.9.).
-   2. Under "Settings:" check `MQTT` solely (cp. figure 2.9.).
+4. Launch the "Polar Sensor Logger" App, in the main tab configure as follows:
+   1. "SDK data select:" check `ECG` solely (cp. figure 2.9.).
+   2. "Settings:" check `MQTT` solely (cp. figure 2.9.).
       * In the pop-up "MQTT-serttings" configure (cp. figure 2.10.):
          * MQTT-broker address: `127.0.0.1`
          * Port: `1883`
@@ -250,19 +250,38 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 
 <div style='page-break-after: always'></div>
 
-Listing 2.7. shows an example payload of topic `psl/hr` as JSON (size: 173 Bytes), where ```"hr": 64``` corresponds to the heart rate in Beats per Minute (BPM) and ```"rr": [ 833 ]``` corresponds to the R-R interval in Milliseconds.
+With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` (cp. listing 2.7.) and `psl/hr` (cp. listing 2.8.). We consume the latter only, where ```"hr": 64``` corresponds to the heart rate in Beats per Minute (BPM) and ```"rr": [ 833 ]``` corresponds to the R-R interval in Milliseconds.
 
-*Listing 2.7.: Topic psl/hr, example Payload in JSON*
+*Listing 2.7.: Topic psl/ecg, example Payload in JSON*
 ```json
 {
-    "clientId": "MyPSL-01",
-    "deviceId": "12345678",
-    "sessionId": 1234567890,
-    "timeStamp": 1234567890123,
-    "hr": 64,
-    "rr": [
-        833
-    ]
+  "clientId": "MyPSL-01",
+  "deviceId": "12345678",
+  "sessionId": 1234567890,
+  "sampleRate": 130,
+  "timeStamp": 1234567890123,
+  "sensorTimeStamp": 123456789012345678,
+  "ecg": [
+    -91,
+    -91,
+    -103,
+    -117,
+    -117
+  ]
+}
+```
+
+*Listing 2.8.: Topic psl/hr, example Payload in JSON*
+```json
+{
+  "clientId": "MyPSL-01",
+  "deviceId": "12345678",
+  "sessionId": 1234567890,
+  "timeStamp": 1234567890123,
+  "hr": 64,
+  "rr": [
+    833
+  ]
 }
 ```
 
@@ -270,15 +289,15 @@ Listing 2.7. shows an example payload of topic `psl/hr` as JSON (size: 173 Bytes
 
 ## 3. Visualisation
 
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). With receiving MQTT messages `BP_PSL_Demo` starts its visual feedback (see figure 3.1.). The MQTT plugin writes to the output log with the custom log category `LogMQTTCore` (see listings 3.1. and 3.2.). Wireshark dissecting port 1883 lists, e.g., the `Connect` command from the Unreal Engine MQTT client instance (see figure 3.2.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). With receiving MQTT messages `BP_PSL_Demo` starts its visual feedback (see figure 3.1.). The MQTT plugin writes to the output log with the custom log category `LogMQTTCore` (see listings 3.1., 3.2. nad 3.3.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
 
 TODO:![Animation Screenshot of Map_PSL_Demo PIE](Docs/MapPSLDemoPIE.gif)
 *Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE*
 
 <div style='page-break-after: always'></div>
 
-TODO:*Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
-```log
+*Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
+```
 [...]
 LogWorld: Bringing World /Game/UEDPIE_0_Map_PSL_Demo.Map_PSL_Demo up for play (max tick rate 0)
 LogWorld: Bringing up level for play took: 0.000743
@@ -291,8 +310,15 @@ PIE: Play in editor total start time 0.094 seconds.
 [...]
 ```
 
-TODO:*Listing 3.2.: Output Log of Map_PSL_Demo stopping PIE*
-```log
+*Listing 3.2.: Output Log of Map_PSL_Demo running PIE*
+```
+[...]
+LogBlueprintUserMessages: [BP_PSL_Demo_1] { "clientId": "MyPSL-01", "deviceId": "12345678", "sessionId": 1234567890, "timeStamp": 1234567890123, "hr": 64, "rr": [ 833 ] }
+[...]
+```
+
+*Listing 3.3.: Output Log of Map_PSL_Demo stopping PIE*
+```
 [...]
 LogWorld: BeginTearingDown for /Game/UEDPIE_0_Map_PSL_Demo
 LogMQTTCore: Verbose: Set State to: Disconnecting
