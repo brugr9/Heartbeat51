@@ -289,21 +289,21 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). 
-
-With connecting to MQTT broker `BP_PSL_Demo` the Event `HeartbeatStandby` is called, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.2.). 
-
-With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.3.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). With connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.).
 
 ![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
 *Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+
+<div style='page-break-after: always'></div>
+
+With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.2.).
 
 TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
 *Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 <div style='page-break-after: always'></div>
 
-The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. nad 3.3.).
+The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. and 3.3.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
 
 *Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```
@@ -326,14 +326,18 @@ LogMQTTCore: Verbose: Operations deferred: 0
 LogMQTTCore: Verbose: Processing incoming packets of size: 2
 LogMQTTCore: VeryVerbose: Handled PingResponse message.
 [...]
-LogMQTTCore: Verbose: Copy outgoing operations to buffer
-LogMQTTCore: Verbose: Operations deferred: 0
-[...]
 ```
 
-*Listing 3.2.: Output Log of Map_PSL_Demo running PIE*
+![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
+*Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
+
+<div style='page-break-after: always'></div>
+
+*Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
 ```
 [...]
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 0
 LogBlueprintUserMessages: [BP_PSL_Demo_1] { "clientId": "MyPSL-01", "deviceId": "12345678", "sessionId": 1234567890, "timeStamp": 1234567890123, "hr": 64, "rr": [ 833 ] }
 [...]
 ```
@@ -360,13 +364,6 @@ LogMQTTCore: Verbose: Abandoning Operations
 LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 [...]
 ```
-
-<div style='page-break-after: always'></div>
-
-Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
-
-![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
-*Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
 
 <div style='page-break-after: always'></div>
 
