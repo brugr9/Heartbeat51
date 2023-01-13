@@ -15,13 +15,15 @@ Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor.
 
 * Index Terms:
-  * Physiological Measuring, Electrocardiogram (ECG), Heart Rate (HR)
-  * Integration, Messaging, Internet of Things (IOT), Machine to Machine (M2M)
+  * Physiological Measuring, Electrocardiogram, Heart Rate
+  * Integration, Messaging, Internet of Things, Machine to Machine
 * Technology:
-  * Unreal&reg; Engine (UE), Polar&reg; H10 HR Sensor with Chest Strap, Polar&reg; Sensor Logger (PSL)
-  * Bluetooth&reg; Low Energy (BLE), Message Queuing Telemetry Transport (MQTT), JSON
-  * Mosquitto&trade;, Wireshark&trade;, Android&trade; Debug Bridge (ADB)
-  * Windows&trade; PowerShell&trade; (PS), Chocolatey Package Manager
+  * Unreal Engine, Polar H10 HR Sensor with Chest Strap, Polar Sensor Logger
+  * Bluetooth, USB, MQTT, JSON
+  * Android Debug Bridge, Mosquitto, Wireshark
+  * Windows PowerShell, Chocolatey Package Manager
+
+* Tags: ECG, HR, IOT, M2M, UE, PolarH10, PSL, ADB, BLE, USB, MQTT, JSON
 
 ---
 
@@ -36,8 +38,6 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.1. Firewall](#21-firewall)
   * [2.2. Wireshark](#22-wireshark)
   * [2.3. Unreal Engine](#23-unreal-engine)
-    * [2.3.1. Plugin MQTT](#231-plugin-mqtt)
-    * [2.3.2. MQTT Subscription](#232-mqtt-subscription)
   * [2.4. Mosquitto](#24-mosquitto)
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
@@ -49,8 +49,8 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [B. Readings](#b-readings)
   * [C. Acknowledgements](#c-acknowledgements)
   * [D. Attribution](#d-attribution)
-  * [E. Citation](#e-citation)
-  * [F. Disclaimer](#f-disclaimer)
+  * [E. Disclaimer](#e-disclaimer)
+  * [F. Citation](#f-citation)
 
 <!-- End Document Outline -->
 
@@ -289,24 +289,45 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). With receiving MQTT messages `BP_PSL_Demo` starts its visual feedback (see figure 3.1.). The MQTT plugin writes to the output log with the custom log category `LogMQTTCore` (see listings 3.1., 3.2. nad 3.3.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). 
 
-TODO:![Animation Screenshot of Map_PSL_Demo PIE](Docs/MapPSLDemoPIE.gif)
-*Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE*
+With connecting to MQTT broker `BP_PSL_Demo` the Event `HeartbeatStandby` is called, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.2.). 
+
+With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.3.).
+
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
+*Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+
+TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
+*Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 <div style='page-break-after: always'></div>
+
+The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. nad 3.3.).
 
 *Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```
 [...]
 LogWorld: Bringing World /Game/UEDPIE_0_Map_PSL_Demo.Map_PSL_Demo up for play (max tick rate 0)
-LogWorld: Bringing up level for play took: 0.000743
-LogOnline: OSS: Created online subsystem instance for: :Context_6
+LogWorld: Bringing up level for play took: 0.001161
+LogOnline: OSS: Created online subsystem instance for: :Context_8
 LogMQTTCore: VeryVerbose: Created MQTTConnection for 127.0.0.1
 LogMQTTCore: Display: Created new Client, Num: 1
 LogMQTTCore: Verbose: Set State to: Connecting
 PIE: Server logged in
-PIE: Play in editor total start time 0.094 seconds.
+PIE: Play in editor total start time 0.08 seconds.
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 1
+LogMQTTCore: Verbose: Processing incoming packets of size: 4
+LogMQTTCore: Verbose: Set State to: Connected
+LogMQTTCore: VeryVerbose: Handled ConnectAck message.
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 0
+LogMQTTCore: Verbose: Processing incoming packets of size: 2
+LogMQTTCore: VeryVerbose: Handled PingResponse message.
+[...]
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 0
 [...]
 ```
 
@@ -325,8 +346,24 @@ LogMQTTCore: Verbose: Set State to: Disconnecting
 LogWorld: UWorld::CleanupWorld for Map_PSL_Demo, bSessionEnded=true, bCleanupResources=true
 LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
 LogPlayLevel: Display: Shutting down PIE online subsystems
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 1
+LogMQTTCore: Verbose: Set State to: Disconnected
+LogAudio: Display: Audio Device unregistered from world 'None'.
+LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=5
+LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=5
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogMQTTCore: Verbose: Set State to: Stopping
+LogMQTTCore: Verbose: Abandoning Operations
+LogMQTTCore: Verbose: Abandoning Operations
+LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 [...]
 ```
+
+<div style='page-break-after: always'></div>
+
+Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
 
 ![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
 *Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
@@ -408,8 +445,8 @@ The R-R interval is an inter-beat interval, more precisely the time elapsed betw
 
 ### C. Acknowledgements
 
-* Logo: "A red heart with a heartbeat to the right", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
-* 3D Model: "Heart", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed under [Creative Commons Attribution 4.0](http://creativecommons.org/licenses/by/4.0/).
+* Logo: "**A red heart with a heartbeat to the right**", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
+* 3D Model: "**Heart**", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
 
 ### D. Attribution
 
@@ -422,11 +459,15 @@ The R-R interval is an inter-beat interval, more precisely the time elapsed betw
 * Mosquitto is a registered trade mark of the Eclipse Foundation.
 * Wireshark and the "fin" logo are registered trademarks of the Wireshark Foundation.
 
-### E. Citation
+### E. Disclaimer
+
+This documentation has **not been reviewed or approved** by the *Food and Drug Administration FDA* or by any other agency. It is the users responsibility to ensure compliance with applicable rules and regulations&mdash;be it in the US or elsewhere.
+
+### F. Citation
 
 To acknowledge this work, please cite
 
-> Bruggmann, R. (2023): Unreal&reg; Engine 5.1 Project "Heartbeat" [Computer software]. Online: https://github.com/brugr9/heartbeat51
+> Bruggmann, R. (2023): Unreal&reg; Engine Project "Heartbeat" [Computer software], Version v5.1.0. Licensed under Creative Commons Attribution-ShareAlike 4.0 International. Online: https://github.com/brugr9/heartbeat51
 
 ```bibtex
 @software{Bruggmann_Heartbeat_2023,
@@ -437,10 +478,6 @@ To acknowledge this work, please cite
   url = {https://github.com/brugr9/heartbeat51}
 }
 ```
-
-### F. Disclaimer
-
-This documentation has **not been reviewed or approved** by the *Food and Drug Administration FDA* or by any other agency. It is the users responsibility to ensure compliance with applicable rules and regulations&mdash;be it in the US or elsewhere.
 
 ---
 <!-- Footer -->
