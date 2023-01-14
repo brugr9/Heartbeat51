@@ -23,7 +23,7 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * Android Debug Bridge, Mosquitto, Wireshark
   * Windows PowerShell, Chocolatey Package Manager
 
-* Tags: ECG, HR, IOT, M2M, UE, PolarH10, PSL, ADB, BLE, USB, MQTT, JSON
+* Tags: ECG, HR, HRM, PolarH10, PSL, ADB, BLE, USB, MQTT, JSON, UE, IOT, M2M
 
 ---
 
@@ -165,7 +165,7 @@ Blueprint `BP_PSL_Demo` has events as follows (see figure 2.5.):
 
 ##### 2.3.2.1. Messaging Startup
 
-On `EventBeginPlay` an MQTT-Client is crated and connected, with `HeartbeatStandby` the HeartMesh starts rotating and the TextRenderActor starts blinking. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated by calling `HeartbeatUpdate` (see figure 2.6.).
+On `EventBeginPlay` an MQTT-Client is created and connected, with event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRenderActor starts blinking. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated by calling event `HeartbeatUpdate` (see figure 2.6.).
 
 ![BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
 *Figure 2.6.: BP_PSL_Demo, Event Graph with Startup*
@@ -244,13 +244,13 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
       * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.11.)
       * Hit `OK`
 
-![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![/PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png)
-:-------------------------:|:-------------------------:|:-------------------------:
-*Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"*
+![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL-MainTab-Connected](Docs/PSL-04-MainTab-Connected.png)
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+*Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"* | *Figure 2.12.: PSL, Main Tab, Connected*
 
 <div style='page-break-after: always'></div>
 
-With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` (cp. listing 2.7.) and `psl/hr` (cp. listing 2.8.). We consume the latter only, where ```"hr": 64``` corresponds to the heart rate in Beats per Minute (BPM) and ```"rr": [ 833 ]``` corresponds to the R-R interval in Milliseconds.
+With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` with field `"ecg": [ ... ]` showing ECG values in microvolts [uV] (cp. listing 2.7.) and `psl/hr`, where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 833 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
 
 *Listing 2.7.: Topic psl/ecg, example Payload in JSON*
 ```json
@@ -376,7 +376,8 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 * BPM &mdash; Beats per Minute
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
-* IBI &mdash; Inter-beat Interval
+* HRM &mdash; Heart Rate Monitor
+* IBI &mdash; Interbeat Interval
 * IOT &mdash; Internet of Things
 * JSON &mdash; JavaScript Object Notation
 * M2M &mdash; Machine to Machine
@@ -386,7 +387,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 * PS &mdash; PowerShell
 * PSL &mdash; Polar Sensor Logger
 * QoS &mdash; Quality of Service
-* RRI &mdash; R-R Interval
+* RRI &mdash; RR Interval
 * UE &mdash; Unreal Engine
 * USB &mdash; Universal Serial Bus
 
@@ -414,9 +415,9 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 
 Retained messages only appear to be retained, when a client subscribes after the initial publish.
 
-#### R-R Interval
+#### RR Interval
 
-The R-R interval is an inter-beat interval, more precisely the time elapsed between two successive R-waves of the QRS signal on the electrocardiogram, in Millisecond (cp. [10] and [11]).
+The RR interval RRI is an interbeat interval IBI, more precisely the time elapsed between two successive R-waves of the QRS signal on the electrocardiogram, in milliseconds [ms] (cp. [10] and [11]).
 
 <div style='page-break-after: always'></div>
 
