@@ -309,22 +309,29 @@ The MQTT plugin writes to the output log with custom log category `LogMQTTCore` 
 ```
 [...]
 LogWorld: Bringing World /Game/UEDPIE_0_Map_PSL_Demo.Map_PSL_Demo up for play (max tick rate 0)
-LogWorld: Bringing up level for play took: 0.001161
-LogOnline: OSS: Created online subsystem instance for: :Context_8
+LogWorld: Bringing up level for play took: 0.000950
+LogOnline: OSS: Created online subsystem instance for: :Context_6
 LogMQTTCore: VeryVerbose: Created MQTTConnection for 127.0.0.1
 LogMQTTCore: Display: Created new Client, Num: 1
 LogMQTTCore: Verbose: Set State to: Connecting
+LogMQTTCore: Verbose: Queued Subscribe message with PacketId 1., and Topic Filter: 'psl/hr'
 PIE: Server logged in
-PIE: Play in editor total start time 0.08 seconds.
+PIE: Play in editor total start time 0.132 seconds.
 LogMQTTCore: Verbose: Copy outgoing operations to buffer
-LogMQTTCore: Verbose: Operations deferred: 1
+LogMQTTCore: Verbose: Operations deferred: 2
 LogMQTTCore: Verbose: Processing incoming packets of size: 4
 LogMQTTCore: Verbose: Set State to: Connected
 LogMQTTCore: VeryVerbose: Handled ConnectAck message.
 LogMQTTCore: Verbose: Copy outgoing operations to buffer
 LogMQTTCore: Verbose: Operations deferred: 0
+LogMQTTCore: Verbose: Processing incoming packets of size: 5
+LogMQTTCore: VeryVerbose: Handled SubscribeAck message with PacketId 1.
 LogMQTTCore: Verbose: Processing incoming packets of size: 2
 LogMQTTCore: VeryVerbose: Handled PingResponse message.
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 0
+LogMQTTCore: Verbose: Copy outgoing operations to buffer
+LogMQTTCore: Verbose: Operations deferred: 0
 [...]
 ```
 
@@ -336,9 +343,17 @@ LogMQTTCore: VeryVerbose: Handled PingResponse message.
 *Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
 ```
 [...]
-LogMQTTCore: Verbose: Copy outgoing operations to buffer
-LogMQTTCore: Verbose: Operations deferred: 0
-LogBlueprintUserMessages: [BP_PSL_Demo_1] { "clientId": "MyPSL-01", "deviceId": "12345678", "sessionId": 1234567890, "timeStamp": 1234567890123, "hr": 64, "rr": [ 833 ] }
+LogMQTTCore: Verbose: Processing incoming packets of size: 157
+LogMQTTCore: VeryVerbose: Handled Publish message.
+LogBlueprintUserMessages: [BP_AccDemo_C_3] {
+  "clientId": "MyPSL-01",
+  "deviceId": "12345678",
+  "sessionId": 1234567890,
+  "timeStamp": 1234567890123,
+  "hr": 64,
+  "rr": [
+    833
+  ]
 [...]
 ```
 
