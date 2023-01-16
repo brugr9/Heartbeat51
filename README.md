@@ -440,8 +440,6 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 > *A retained message is a normal MQTT message with the retained flag set to true. The broker stores the last retained message and the corresponding QoS for that topic. Each client that subscribes to a topic pattern that matches the topic of the retained message receives the retained message immediately after they subscribe. The broker stores only one retained message per topic.*
 (HiveMQ, cp. [9.2])
 
-Retained messages only appear to be retained, when a client subscribes after the initial publish.
-
 #### HRM &ndash; Heart Rate Variability
 
 > *Heart rate variability (HRV) is the amount by which the time interval between successive heartbeats (interbeat interval, IBI) varies from beat to beat. The magnitude of this variability is small (measured in milliseconds), and therefore, assessment of HRV requires specialized measurement devices and accurate analysis tools. Typically HRV is extracted from an electrocardiogram (ECG) measurement by measuring the time intervals between successive heartbeats [...].
