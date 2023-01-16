@@ -23,7 +23,7 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * Android Debug Bridge, Mosquitto, Wireshark
   * Windows PowerShell, Chocolatey Package Manager
 
-* Tags: ECG, HR, HRM, PolarH10, PSL, ADB, BLE, USB, MQTT, JSON, UE, IOT, M2M
+* Tags: UE, PolarH10, ECG, HR, HRM, PSL, ADB, BLE, USB, MQTT, JSON, IOT, M2M
 
 ---
 
@@ -42,6 +42,8 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
 * [3. Visualisation](#3-visualisation)
+  * [3.1. Heartbeat Stand By](#31-heartbeat-stand-by)
+  * [3.2. Heartbeat Update](#32-heartbeat-update)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
@@ -244,7 +246,7 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
       * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.11.)
       * Hit `OK`
 
-![PSL-MainTab](Docs/PSL-01-MainTab.png) | ![PSL-DialogueMQTTSettings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL-DialogueSeekSensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL-MainTab-Connected](Docs/PSL-04-MainTab-Connected.png)
+![PSL MainTab](Docs/PSL-01-MainTab.png) | ![PSL Dialogue MQTT-Settings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL Dialogue Seek Sensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL MainTab Connected](Docs/PSL-04-MainTab-Connected.png)
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
 *Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"* | *Figure 2.12.: PSL, Main Tab, Connected*
 
@@ -289,21 +291,9 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). With connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.).
+### 3.1. Heartbeat Stand By
 
-![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
-*Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
-
-<div style='page-break-after: always'></div>
-
-With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.2.).
-
-TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
-*Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
-
-<div style='page-break-after: always'></div>
-
-The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. and 3.3.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. and 3.3.).
 
 *Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```
@@ -335,10 +325,26 @@ LogMQTTCore: Verbose: Operations deferred: 0
 [...]
 ```
 
+<div style='page-break-after: always'></div>
+
+Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
+
 ![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
 *Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
 
+With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.).
+
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
+*Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+
 <div style='page-break-after: always'></div>
+
+### 3.2. Heartbeat Update
+
+With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.2.).
+
+TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
+*Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 *Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
 ```
@@ -356,6 +362,8 @@ LogBlueprintUserMessages: [BP_AccDemo_C_3] {
   ]
 [...]
 ```
+
+<div style='page-break-after: always'></div>
 
 *Listing 3.3.: Output Log of Map_PSL_Demo stopping PIE*
 ```
@@ -392,6 +400,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
 * HRM &mdash; Heart Rate Monitor
+* HRV &mdash; Heart Rate Variability
 * IBI &mdash; Interbeat Interval
 * IOT &mdash; Internet of Things
 * JSON &mdash; JavaScript Object Notation
@@ -410,7 +419,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 
 ### Glossary
 
-#### Quality of Service QoS
+#### MQTT &ndash; Quality of Service QoS
 
 > *The Quality of Service (QoS) level is an agreement between the sender of a message and the receiver of a message that defines the guarantee of delivery for a specific message. There are 3 QoS levels in MQTT:*
 >
@@ -424,15 +433,24 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 > * *Message delivery from the broker to the subscribing client.*
 >
 > *We will look at the two sides of the message delivery separately because there are subtle differences between the two. The client that publishes the message to the broker defines the QoS level of the message when it sends the message to the broker. The broker transmits this message to subscribing clients using the QoS level that each subscribing client defines during the subscription process. If the subscribing client defines a lower QoS than the publishing client, the broker transmits the message with the lower quality of service.*
-(HiveMQ, cp. [9])
+(HiveMQ, cp. [9.1])
 
-#### Retain
+#### MQTT &ndash; Retain
+
+> *A retained message is a normal MQTT message with the retained flag set to true. The broker stores the last retained message and the corresponding QoS for that topic. Each client that subscribes to a topic pattern that matches the topic of the retained message receives the retained message immediately after they subscribe. The broker stores only one retained message per topic.*
+(HiveMQ, cp. [9.2])
 
 Retained messages only appear to be retained, when a client subscribes after the initial publish.
 
-#### RR Interval
+#### HRM &ndash; Heart Rate Variability
 
-The RR interval RRI is an interbeat interval IBI, more precisely the time elapsed between two successive R-waves of the QRS signal on the electrocardiogram, in milliseconds [ms] (cp. [10] and [11]).
+> *Heart rate variability (HRV) is the amount by which the time interval between successive heartbeats (interbeat interval, IBI) varies from beat to beat. The magnitude of this variability is small (measured in milliseconds), and therefore, assessment of HRV requires specialized measurement devices and accurate analysis tools. Typically HRV is extracted from an electrocardiogram (ECG) measurement by measuring the time intervals between successive heartbeats [...].
+Heart rate variability in healthy individuals is strongest during rest, whereas during stress and physical activity HRV is decreased. The magnitude of heart rate variability is different between individuals. High HRV is commonly linked to young age, good physical fitness, and good overall health.*
+(Kubios, cp. [10]).
+
+#### HRM &ndash; RR Interval
+
+The RR interval RRI is an interbeat interval IBI, more precisely the time elapsed between two successive R-waves of the QRS signal on the electrocardiogram, in milliseconds [ms] (cp. [11] and [12]).
 
 <div style='page-break-after: always'></div>
 
@@ -446,20 +464,22 @@ The RR interval RRI is an interbeat interval IBI, more precisely the time elapse
 * [6] **Eclipse Mosquitto** &ndash; An open source MQTT broker. Online: [https://mosquitto.org/](https://mosquitto.org/)
 * [7] Skanda Hazarika: **How to Install ADB on Windows, macOS, and Linux**. July 28, 2021. In: XDA Developers. Online: [https://www.xda-developers.com/install-adb-windows-macos-linux](https://www.xda-developers.com/install-adb-windows-macos-linux)
 * [8] Tushar Sadhwani: **Connecting Android Apps to localhost, Simplified**. April 17, 2021. In: DEV Community, Online: [https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm](https://dev.to/tusharsadhwani/connecting-android-apps-to-localhost-simplified-57lm)
-* [9] HiveMQ Team: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. February 16, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
-* [10]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval)
-* [11] Mike Cadogan: **R wave Overview**. Feb 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
+* [9.1] HiveMQ Team: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. February 16, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+* [9.2] HiveMQ Team: **Retained Messages - MQTT Essentials: Part 8**. March 2, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-8-retained-messages/](https://www.hivemq.com/blog/mqtt-essentials-part-8-retained-messages/)
+* [10] **Heart Rate Variability**. In: Website of Kubios Oy, Section "HRV Resources". Online: [https://www.kubios.com/about-hrv/](https://www.kubios.com/about-hrv/)
+* [11]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval)
+* [12] Mike Cadogan: **R wave Overview**. February 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
 
 ### B. Readings
 
 * Ch&#281;&cacute;, A.; Olczak, D.; Fernandes, T. and Ferreira, H. (2015). **Physiological Computing Gaming - Use of Electrocardiogram as an Input for Video Gaming**. In: Proceedings of the 2nd International Conference on Physiological Computing Systems - PhyCS, ISBN 978-989-758-085-7; ISSN 2184-321X, pages 157-163. DOI: [10.5220/0005244401570163](http://dx.doi.org/10.5220/0005244401570163)
 
-<div style='page-break-after: always'></div>
-
 ### C. Acknowledgements
 
 * Logo: "**A red heart with a heartbeat to the right**", by Diego Naive / Joe Sutherland, June 6, 2018. Online: [https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg](https://de.wikipedia.org/wiki/Datei:Red_heart_with_heartbeat_logo.svg), licensed [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
 * 3D Model: "**Heart**", by phenopeia, January 16, 2015. Online: [https://skfb.ly/CCyL](https://skfb.ly/CCyL), licensed [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
+
+<div style='page-break-after: always'></div>
 
 ### D. Attribution
 
