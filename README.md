@@ -41,9 +41,10 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
 * [3. Visualisation](#3-visualisation)
-  * [3.1. Startup Messaging and Heartbeat Standby](#31-startup-messaging-and-heartbeat-standby)
-  * [3.2. Heartbeat Update](#32-heartbeat-update)
-  * [3.3. Teardown Messaging](#33-teardown-messaging)
+  * [3.1. Startup Messaging](#31-startup-messaging)
+  * [3.2. Heartbeat Standby](#32-heartbeat-standby)
+  * [3.3. Heartbeat Update](#33-heartbeat-update)
+  * [3.4. Teardown Messaging](#34-teardown-messaging)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
@@ -246,9 +247,9 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
       * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.11.)
       * Hit `OK`
 
-![PSL MainTab](Docs/PSL-01-MainTab.png) | ![PSL Dialogue MQTT-Settings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL Dialogue Seek Sensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL MainTab Connected](Docs/PSL-04-MainTab-Connected.png)
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-*Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"* | *Figure 2.12.: PSL, Main Tab, Connected*
+| ![PSL MainTab](Docs/PSL-01-MainTab.png) | ![PSL Dialogue MQTT-Settings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL Dialogue Seek Sensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL MainTab Connected](Docs/PSL-04-MainTab-Connected.png) |
+|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+| *Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"* | *Figure 2.12.: PSL, Main Tab, Connected* |
 
 <div style='page-break-after: always'></div>
 
@@ -291,7 +292,7 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-### 3.1. Startup Messaging and Heartbeat Standby
+### 3.1. Startup Messaging
 
 In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.1.).
 
@@ -332,10 +333,12 @@ Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the 
 ![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
 *Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
 
-With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.1. and 3.1.2.).
+### 3.2. Heartbeat Standby
 
-![106](Docs/HeartbeatStandby/106.png) | ![137](Docs/HeartbeatStandby/137.png) | ![152](Docs/HeartbeatStandby/152.png) | ![164](Docs/HeartbeatStandby/164.png) | ![183](Docs/HeartbeatStandby/183.png) | ![193](Docs/HeartbeatStandby/193.png)
-:----------:|:----------:|:----------:|:----------:|:----------:|:----------:
+With UE subscribing to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figures 3.1.1. and 3.1.2.).
+
+| ![106](Docs/HeartbeatStandby/106.png) | ![137](Docs/HeartbeatStandby/137.png) | ![152](Docs/HeartbeatStandby/152.png) | ![164](Docs/HeartbeatStandby/164.png) | ![183](Docs/HeartbeatStandby/183.png) | ![193](Docs/HeartbeatStandby/193.png) |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
 *Figure 3.1.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Standby Mode*
 
 ![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
@@ -343,12 +346,12 @@ With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby
 
 <div style='page-break-after: always'></div>
 
-### 3.2. Heartbeat Update
+### 3.3. Heartbeat Update
 
 With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figures 3.2.1 and 3.2.2. and listing 3.2.).
 
-![0752](Docs/HeartbeatUpdate/0752.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![2983](Docs/HeartbeatUpdate/2983.png) | ![4304](Docs/HeartbeatUpdate/4304.png) | ![5616](Docs/HeartbeatUpdate/5616.png)
-:----------:|:----------:|:----------:|:----------:|:----------:|:----------:
+| ![0752](Docs/HeartbeatUpdate/0752.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![2983](Docs/HeartbeatUpdate/2983.png) | ![4304](Docs/HeartbeatUpdate/4304.png) | ![5616](Docs/HeartbeatUpdate/5616.png) |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
 *Figure 3.2.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 ![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
@@ -382,7 +385,7 @@ LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
 [...]
 ```
 
-### 3.3. Teardown Messaging
+### 3.4. Teardown Messaging
 
 With stopping PIE the MQTT-Client disconnects (see listing 3.3.).
 
