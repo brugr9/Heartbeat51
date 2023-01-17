@@ -41,8 +41,9 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
 * [3. Visualisation](#3-visualisation)
-  * [3.1. Heartbeat Stand By](#31-heartbeat-stand-by)
+  * [3.1. Startup Messaging and Heartbeat Standby](#31-startup-messaging-and-heartbeat-standby)
   * [3.2. Heartbeat Update](#32-heartbeat-update)
+  * [3.3. Teardown Messaging](#33-teardown-messaging)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
@@ -290,9 +291,9 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-### 3.1. Heartbeat Stand By
+### 3.1. Startup Messaging and Heartbeat Standby
 
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listings 3.1., 3.2. and 3.3.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.1.).
 
 *Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```
@@ -331,19 +332,27 @@ Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the 
 ![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
 *Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
 
-With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.).
+With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figure 3.1.1. and 3.1.2.).
+
+![106](Docs/HeartbeatStandby/106.png) | ![137](Docs/HeartbeatStandby/137.png) | ![152](Docs/HeartbeatStandby/152.png) | ![164](Docs/HeartbeatStandby/164.png) | ![183](Docs/HeartbeatStandby/183.png) | ![193](Docs/HeartbeatStandby/193.png)
+:----------:|:----------:|:----------:|:----------:|:----------:|:----------:
+*Figure 3.1.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Standby Mode*
 
 ![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
-*Figure 3.1.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+*Figure 3.1.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
 
 <div style='page-break-after: always'></div>
 
 ### 3.2. Heartbeat Update
 
-With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.2.).
+With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figures 3.2.1 and 3.2.2. and listing 3.2.).
+
+![0752](Docs/HeartbeatUpdate/0752.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![2983](Docs/HeartbeatUpdate/2983.png) | ![4304](Docs/HeartbeatUpdate/4304.png) | ![5616](Docs/HeartbeatUpdate/5616.png)
+:----------:|:----------:|:----------:|:----------:|:----------:|:----------:
+*Figure 3.2.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 ![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
-*Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
+*Figure 3.2.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 *Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
 ```
@@ -359,10 +368,23 @@ LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
   "rr": [
     938
   ]
+LogMQTTCore: Verbose: Processing incoming packets of size: 157
+LogMQTTCore: VeryVerbose: Handled Publish message.
+LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
+  "clientId": "MyPSL-01",
+  "deviceId": "12345678",
+  "sessionId": 1234567890,
+  "timeStamp": 1235678901234,
+  "hr": 124,
+  "rr": [
+    484
+  ]
 [...]
 ```
 
-<div style='page-break-after: always'></div>
+### 3.3. Teardown Messaging
+
+With stopping PIE the MQTT-Client disconnects (see listing 3.3.).
 
 *Listing 3.3.: Output Log of Map_PSL_Demo stopping PIE*
 ```
