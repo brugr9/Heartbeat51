@@ -16,14 +16,13 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
 
 * Index Terms:
   * Physiological Measuring, Electrocardiogram, Heart Rate
-  * Integration, Messaging, Internet of Things, Machine to Machine
+  * Integration, Messaging, PubSub, Internet of Things, Machine to Machine
 * Technology:
-  * Unreal Engine, Polar H10 HR Sensor with Chest Strap, Polar Sensor Logger
+  * Unreal Engine, Polar H10 HR Sensor with Chest Strap, Polar Sensor Logger, Mosquitto
   * Bluetooth, USB, MQTT, JSON
-  * Android Debug Bridge, Mosquitto, Wireshark
-  * Windows PowerShell, Chocolatey Package Manager
+  * Windows PowerShell, Chocolatey Package Manager, Android Debug Bridge, Wireshark
 
-* Tags: UE, PolarH10, ECG, HR, HRM, PSL, ADB, BLE, USB, MQTT, JSON, IOT, M2M
+* Tags: UE, PolarH10, ECG, HR, HRM, PSL, ADB, BLE, USB, PubSub, MQTT, JSON, IOT, M2M
 
 ---
 
@@ -119,7 +118,7 @@ Clone UE project "Heartbeat" using git, e.g., by ```git clone https://github.com
 
 #### 2.3.1. Plugin MQTT
 
-UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is not yet documented.
+UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is Beta and is not yet documented.
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.2.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
@@ -167,14 +166,14 @@ Blueprint `BP_PSL_Demo` has events as follows (see figure 2.5.):
 
 ##### 2.3.2.1. Messaging Startup
 
-On `EventBeginPlay` an MQTT-Client is created and connected, with event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRenderActor starts blinking. `OnConnect`, if the connection was accepted, the topic is subscribed. `OnMessage` the received MQTT-Client-Message payload is evaluated by calling event `HeartbeatUpdate` (see figure 2.6.).
+On `EventBeginPlay` an MQTT-Client is created and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. With event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRender-Actor starts blinking. `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (see figure 2.6.).
 
 ![BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
 *Figure 2.6.: BP_PSL_Demo, Event Graph with Startup*
 
 ##### 2.3.2.2. Messaging Teardown
 
-On `EventEndPlay` the topic is unsubscribed and the MQTT-Client is disconnected (see figure 2.7.).
+On `EventEndPlay` the topic is unsubscribed. With event `HeartbeatDeactivate` the Mesh Component 'heart' and the TextRender-Actor stop its animation. `OnDisconnect` the MQTT-Client is disconnected (see figure 2.7.).
 
 ![BP_PSL_Demo, Event Graph with Teardownp](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
 *Figure 2.7.: BP_PSL_Demo, Event Graph with Teardown*
@@ -252,7 +251,7 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 
 <div style='page-break-after: always'></div>
 
-With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` with field `"ecg": [ ... ]` showing ECG values in microvolts [uV] (cp. listing 2.7.) and `psl/hr`, where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 833 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
+With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` with field `"ecg": [ ... ]` showing ECG values in microvolts [uV] (cp. listing 2.7.) and `psl/hr`, where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 938 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
 
 *Listing 2.7.: Topic psl/ecg, example Payload in JSON*
 ```json
@@ -282,7 +281,7 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
   "timeStamp": 1234567890123,
   "hr": 64,
   "rr": [
-    833
+    938
   ]
 }
 ```
@@ -343,7 +342,7 @@ With UE connecting to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby
 
 With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figure 3.2.).
 
-TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
 *Figure 3.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
 
 *Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
@@ -351,14 +350,14 @@ TODO:![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/Map
 [...]
 LogMQTTCore: Verbose: Processing incoming packets of size: 157
 LogMQTTCore: VeryVerbose: Handled Publish message.
-LogBlueprintUserMessages: [BP_AccDemo_C_3] {
+LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
   "clientId": "MyPSL-01",
   "deviceId": "12345678",
   "sessionId": 1234567890,
   "timeStamp": 1234567890123,
   "hr": 64,
   "rr": [
-    833
+    938
   ]
 [...]
 ```
