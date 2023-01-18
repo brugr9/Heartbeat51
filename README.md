@@ -41,10 +41,10 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
 * [3. Visualisation](#3-visualisation)
-  * [3.1. Startup Messaging](#31-startup-messaging)
+  * [3.1. Messaging Startup](#31-messaging-startup)
   * [3.2. Heartbeat Standby](#32-heartbeat-standby)
   * [3.3. Heartbeat Update](#33-heartbeat-update)
-  * [3.4. Teardown Messaging](#34-teardown-messaging)
+  * [3.4. Messaging Teardown](#34-messaging-teardown)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
@@ -77,7 +77,7 @@ We use system components as follows (for the specific data flow see Listing 1.2.
 *Listing 1.2.: Specific Data Flow*
 > Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; **Unreal Engine**
 
-The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore use Wireshark and Android Debug Bridge&mdash;and Polar Sensor Logger on Android.
+The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore configure the firewall, use Wireshark adn Android Debug Bridge&mdash;and on Android we setup Polar Sensor Logger.
 
 <div style='page-break-after: always'></div>
 
@@ -137,10 +137,10 @@ Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a T
 Blueprint `BP_PSL_Demo` has components as follows (see figure 2.4.):
 
 * Scene Components:
-  * Static Mesh Component `Heart`
+  * Static Mesh Component `HeartMesh`
 * Actor Components:
   * Rotating Movement Component
-  * Timeline Component `HeartbeatTimeline`
+  * Timeline Component `HeartbeatTimeline`: Default asset curve template `PulseOut` (see figure 2.5.)
 
 Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.4.):
 
@@ -148,46 +148,52 @@ Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.4.):
 * MQTT-Client Object Reference `MyClient`
 * MQTT-Subscription Object Reference `MySubscription`
 * TextRenderActor Object Reference `TextRender` (public)
+* Timer Handle `TextRenderVisibilityTimer`
 
-![BP_PSL_Demo, Variable TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
-*Figure 2.4.: BP_PSL_Demo, Variable TextRender*
+![Blueprint BP_PSL_Demo, Variable TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
+*Figure 2.4.: Blueprint BP_PSL_Demo, Variable TextRender*
+
+![Blueprint BP_PSL_Demo, Timeline Component HeartbeatTimeline](Docs/UEProjectHeartbeat-BP_PSL_Demo-HeartbeatTimeline.png)
+*Figure 2.5.: Blueprint BP_PSL_Demo, Timeline Component HeartbeatTimeline*
 
 <div style='page-break-after: always'></div>
 
-Blueprint `BP_PSL_Demo` has events as follows (see figure 2.5.):
+Blueprint `BP_PSL_Demo` has events as follows (see figure 2.6.):
 
-* EventBeginPlay, EventEndPlay
-* OnConnect, OnDisconnect, OnMessage
-* HeartbeatStandby, HeartbeatUpdate, HeartbeatDeactivate
-* TextRenderBlink, HeartbeatReset
+* Gameplay: EventBeginPlay, EventEndPlay
+* Messaging: OnConnect, OnDisconnect, OnMessage
+* Visualisation:
+  * Main: HeartbeatStandby, HeartbeatUpdate, HeartbeatDeactivate
+  * Helpers: TextRenderBlink, HeartbeatReset
+* Testing: Testing01, Testing02, Testing03
 
-![BP_PSL_Demo, Event Graph Overview](Docs/UEProjectHeartbeat-BP_PSL_Demo_EventGraph.png)
-*Figure 2.5.: BP_PSL_Demo, Event Graph Overview*
+![Blueprint BP_PSL_Demo, Event Graph Overview](Docs/UEProjectHeartbeat-BP_PSL_Demo_EventGraph.png)
+*Figure 2.6.: Blueprint BP_PSL_Demo, Event Graph Overview*
 
 <div style='page-break-after: always'></div>
 
 ##### 2.3.2.1. Messaging Startup
 
-On `EventBeginPlay` an MQTT-Client is created and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. With event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRender-Actor starts blinking. `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (see figure 2.6.).
+On `EventBeginPlay` an MQTT-Client is created and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. With event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRender-Actor starts blinking. `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (see figure 2.7.).
 
-![BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
-*Figure 2.6.: BP_PSL_Demo, Event Graph with Startup*
+![Blueprint BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
+*Figure 2.7.: Blueprint BP_PSL_Demo, Event Graph with Startup*
 
 ##### 2.3.2.2. Messaging Teardown
 
-On `EventEndPlay` the topic is unsubscribed. With event `HeartbeatDeactivate` the Mesh Component 'heart' and the TextRender-Actor stop its animation. `OnDisconnect` the MQTT-Client is disconnected (see figure 2.7.).
+On `EventEndPlay` the topic is unsubscribed. With event `HeartbeatDeactivate` the Mesh Component 'heart' and the TextRender-Actor stop its animation. Then the MQTT-Client is disconnected, `OnDisconnect` a we print a string to the output log (see figure 2.8.).
 
-![BP_PSL_Demo, Event Graph with Teardownp](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
-*Figure 2.7.: BP_PSL_Demo, Event Graph with Teardown*
+![Blueprint BP_PSL_Demo, Event Graph with Teardownp](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
+*Figure 2.8.: Blueprint BP_PSL_Demo, Event Graph with Teardown*
 
 <div style='page-break-after: always'></div>
 
 ### 2.4. Mosquitto
 
-Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto Broker" (see figure 2.8.).
+Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto Broker" (see figure 2.9.).
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
-*Figure 2.8.: Mosquitto Broker as Windows Service*
+*Figure 2.9.: Mosquitto Broker as Windows Service*
 
 <div style='page-break-after: always'></div>
 
@@ -235,25 +241,25 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 2. Activate Bluetooth
 3. Activate Location Service
 4. Launch the "Polar Sensor Logger" App, in the main tab configure as follows:
-   1. "SDK data select:" check `ECG` solely (cp. figure 2.9.).
-   2. "Settings:" check `MQTT` solely (cp. figure 2.9.).
-      * In the pop-up "MQTT-serttings" configure (cp. figure 2.10.):
+   1. "SDK data select:" check `ECG` solely (cp. figure 2.10.).
+   2. "Settings:" check `MQTT` solely (cp. figure 2.10.).
+      * In the pop-up "MQTT-serttings" configure (cp. figure 2.11.):
          * MQTT-broker address: `127.0.0.1`
          * Port: `1883`
          * Topic: `psl`
          * Client ID: e.g. `MyPSL-01`
       * Hit `OK`
    3. Hit `SEEK SENSOR`
-      * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.11.)
+      * Select listed sensor `Polar H10 12345678` (ID will differ) (cp. figure 2.12.)
       * Hit `OK`
 
 | ![PSL MainTab](Docs/PSL-01-MainTab.png) | ![PSL Dialogue MQTT-Settings](Docs/PSL-02-DialogueMQTTSettings.png) | ![PSL Dialogue Seek Sensor](Docs/PSL-03-DialogueSeekSensor.png) | ![PSL MainTab Connected](Docs/PSL-04-MainTab-Connected.png) |
 |:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
-| *Figure 2.9.: PSL, Main Tab* | *Figure 2.10.: PSL, Dialogue "MQTT Settings"* | *Figure 2.11.: PSL, Dialogue "Seek Sensor"* | *Figure 2.12.: PSL, Main Tab, Connected* |
+| *Figure 2.10.: PSL, Main Tab* | *Figure 2.11.: PSL, Dialogue "MQTT Settings"* | *Figure 2.12.: PSL, Dialogue "Seek Sensor"* | *Figure 2.13.: PSL, Main Tab, Connected* |
 
 <div style='page-break-after: always'></div>
 
-With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are delivered: `psl/ecg` with field `"ecg": [ ... ]` showing ECG values in microvolts [uV] (cp. listing 2.7.) and `psl/hr`, where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 938 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
+With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated, two topics are delivered: topic `psl/ecg` with a payload containing field `"ecg": [ ... ]` which delivers ECG values in microvolts [uV] (cp. listing 2.7.) and topic `psl/hr` where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 938 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
 
 *Listing 2.7.: Topic psl/ecg, example Payload in JSON*
 ```json
@@ -292,7 +298,7 @@ With Polar Sensor Logger "SDK data select", *ECG* activated, two topics are deli
 
 ## 3. Visualisation
 
-### 3.1. Startup Messaging
+### 3.1. Messaging Startup
 
 In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.1.).
 
@@ -335,7 +341,7 @@ Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the 
 
 ### 3.2. Heartbeat Standby
 
-With UE subscribing to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the heart MeshComponent and blinking the TextRender (see figures 3.1.1. and 3.1.2.).
+With UE subscribing to an MQTT broker Blueprint `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the `HeartMesh` component and blinking the `TextRender` (see figures 3.1.1. and 3.1.2.).
 
 | ![106](Docs/HeartbeatStandby/106.png) | ![137](Docs/HeartbeatStandby/137.png) | ![152](Docs/HeartbeatStandby/152.png) | ![164](Docs/HeartbeatStandby/164.png) | ![183](Docs/HeartbeatStandby/183.png) | ![193](Docs/HeartbeatStandby/193.png) |
 |:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
@@ -348,7 +354,7 @@ With UE subscribing to an MQTT broker `BP_PSL_Demo` calls event `HeartbeatStandb
 
 ### 3.3. Heartbeat Update
 
-With receiving MQTT messages `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figures 3.2.1 and 3.2.2. and listing 3.2.).
+With receiving MQTT messages Blueprint `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figures 3.2.1 and 3.2.2. and listing 3.2.).
 
 | ![0752](Docs/HeartbeatUpdate/0752.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![2983](Docs/HeartbeatUpdate/2983.png) | ![4304](Docs/HeartbeatUpdate/4304.png) | ![5616](Docs/HeartbeatUpdate/5616.png) |
 |:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
@@ -385,7 +391,7 @@ LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
 [...]
 ```
 
-### 3.4. Teardown Messaging
+### 3.4. Messaging Teardown
 
 With stopping PIE the MQTT-Client disconnects (see listing 3.3.).
 
@@ -466,8 +472,10 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 
 #### HRM &ndash; Heart Rate Variability
 
-> *Heart rate variability (HRV) is the amount by which the time interval between successive heartbeats (interbeat interval, IBI) varies from beat to beat. The magnitude of this variability is small (measured in milliseconds), and therefore, assessment of HRV requires specialized measurement devices and accurate analysis tools. Typically HRV is extracted from an electrocardiogram (ECG) measurement by measuring the time intervals between successive heartbeats [...].
-Heart rate variability in healthy individuals is strongest during rest, whereas during stress and physical activity HRV is decreased. The magnitude of heart rate variability is different between individuals. High HRV is commonly linked to young age, good physical fitness, and good overall health.*
+In a healthy person, the heart does not beat with a fixed frequency, i.e. with a resting pulse of, for example, 60 heartbeats per minute, each beat does not occur after exactly one second or 1000 milliseconds. Fluctuations of 30 to 100 milliseconds in the heartbeat sequence occur as a natural mode of operation of the heart.
+
+> *Heart rate variability (HRV) is the amount by which the time interval between successive heartbeats (interbeat interval, IBI) varies from beat to beat. The magnitude of this variability is small (measured in milliseconds), and therefore, assessment of HRV requires specialized measurement devices and accurate analysis tools. Typically HRV is extracted from an electrocardiogram (ECG) measurement by measuring the time intervals between successive heartbeats [...].*
+*Heart rate variability in healthy individuals is strongest during rest, whereas during stress and physical activity HRV is decreased. The magnitude of heart rate variability is different between individuals. High HRV is commonly linked to young age, good physical fitness, and good overall health.*
 (Kubios, cp. [10]).
 
 #### HRM &ndash; RR Interval
