@@ -314,7 +314,7 @@ PIE: Play in editor total start time 0.132 seconds.
 
 On `EventBeginPlay` an MQTT-Client is created and connected (see figure 3.1.). The MQTT-Plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.2.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the UE MQTT-Client (see figure 3.2.).
 
-With event `OnConnect` &ndash; if the connection was accepted &ndash; the topic is subscribed and event `HeartbeatStandby` is called (cp. [section 3.1.1.](311-heartbeat-standby)). With event `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (cp. [section 3.1.2.](312-heartbeat-update)).
+With event `OnConnect` &ndash; if the connection was accepted &ndash; the topic is subscribed and event `HeartbeatStandby` is called (cp. section 3.1.1.). With event `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (cp. section 3.1.2.).
 
 ![Blueprint BP_PSL_Demo, Event Graph Section 'Startup Messaging'](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
 *Figure 3.1.: Blueprint BP_PSL_Demo, Event Graph Section 'Startup Messaging'*
