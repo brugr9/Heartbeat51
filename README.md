@@ -37,17 +37,23 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.1. Firewall](#21-firewall)
   * [2.2. Wireshark](#22-wireshark)
   * [2.3. Unreal Engine](#23-unreal-engine)
+    * [2.3.1. Plugin MQTT](#231-plugin-mqtt)
+    * [2.3.2. MQTT Subscription](#232-mqtt-subscription)
   * [2.4. Mosquitto](#24-mosquitto)
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
 * [3. Visualisation](#3-visualisation)
   * [3.1. Messaging Startup](#31-messaging-startup)
-  * [3.2. Heartbeat Standby](#32-heartbeat-standby)
-  * [3.3. Heartbeat Update](#33-heartbeat-update)
-  * [3.4. Messaging Teardown](#34-messaging-teardown)
+    * [3.1.1. Heartbeat Standby](#311-heartbeat-standby)
+    * [3.1.2. Heartbeat Update](#312-heartbeat-update)
+  * [3.2. Messaging Teardown](#32-messaging-teardown)
 * [Appendix](#appendix)
   * [Acronyms](#acronyms)
   * [Glossary](#glossary)
+    * [MQTT – Quality of Service](#mqtt--quality-of-service)
+    * [MQTT – Retain](#mqtt--retain)
+    * [HRM – Heart Rate Variability](#hrm--heart-rate-variability)
+    * [HRM – RR Interval](#hrm--rr-interval)
   * [A. References](#a-references)
   * [B. Readings](#b-readings)
   * [C. Acknowledgements](#c-acknowledgements)
@@ -127,28 +133,29 @@ UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.)
 
 #### 2.3.2. MQTT Subscription
 
-Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable 'TextRender' as Object Reference (see figure 2.3.).
+Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable `TextRender` as Object Reference (see figure 2.3.).
 
-![Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
-*Figure 2.3.: Map_PSL_Demo with BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport*
+![Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
+*Figure 2.3.: Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport*
 
 <div style='page-break-after: always'></div>
 
-Blueprint `BP_PSL_Demo` has components as follows (see figure 2.4.):
+Blueprint `BP_PSL_Demo` has components and variables as follows (see figure 2.4.):
 
 * Scene Components:
   * Static Mesh Component `HeartMesh`
 * Actor Components:
   * Rotating Movement Component
-  * Timeline Component `HeartbeatTimeline`: Default asset curve template `PulseOut` (see figure 2.5.)
-
-Blueprint `BP_PSL_Demo` has variables as follows (see figure 2.4.):
-
-* String `MyTopic`, default value set to `psl/hr`
-* MQTT-Client Object Reference `MyClient`
-* MQTT-Subscription Object Reference `MySubscription`
-* TextRenderActor Object Reference `TextRender` (public)
-* Timer Handle `TextRenderVisibilityTimer`
+  * Timeline Component `HeartbeatTimeline` (see figure 2.5.):
+    * External Curve: Default Asset Curve Template `PulseOut`
+    * Lenght: `1.00`
+    * Looping: `on`
+* Variables:
+  * String `MyTopic`, default value set to `psl/hr`
+  * MQTT-Client Object Reference `MyClient`
+  * MQTT-Subscription Object Reference `MySubscription`
+  * TextRenderActor Object Reference `TextRender` (public)
+  * Timer Handle `TextRenderVisibilityTimer`
 
 ![Blueprint BP_PSL_Demo, Variable TextRender](Docs/UEProjectHeartbeat-BP_PSL_Demo-TextRender.png)
 *Figure 2.4.: Blueprint BP_PSL_Demo, Variable TextRender*
@@ -167,24 +174,15 @@ Blueprint `BP_PSL_Demo` has events as follows (see figure 2.6.):
   * Helpers: TextRenderBlink, HeartbeatReset
 * Testing: Testing01, Testing02, Testing03
 
+Blueprint `BP_PSL_Demo` has Event Graph sections as follows (see figure 2.6.):
+
+* 'Startup Messaging' (color green, cp. section 3.1.)
+* 'Teardown Messaging' (color violet, cp. section 3.2.)
+* 'Testing' (color yellow, not documented here)
+* 'Heartbeat' (color red, cp. section 3.1. and 3.2.)
+
 ![Blueprint BP_PSL_Demo, Event Graph Overview](Docs/UEProjectHeartbeat-BP_PSL_Demo_EventGraph.png)
 *Figure 2.6.: Blueprint BP_PSL_Demo, Event Graph Overview*
-
-<div style='page-break-after: always'></div>
-
-##### 2.3.2.1. Messaging Startup
-
-On `EventBeginPlay` an MQTT-Client is created and connected. `OnConnect`, if the connection was accepted, the topic is subscribed. With event `HeartbeatStandby` the Mesh Component 'heart' starts rotating and the TextRender-Actor starts blinking. `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (see figure 2.7.).
-
-![Blueprint BP_PSL_Demo, Event Graph with Startup](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
-*Figure 2.7.: Blueprint BP_PSL_Demo, Event Graph with Startup*
-
-##### 2.3.2.2. Messaging Teardown
-
-On `EventEndPlay` the topic is unsubscribed. With event `HeartbeatDeactivate` the Mesh Component 'heart' and the TextRender-Actor stop its animation. Then the MQTT-Client is disconnected, `OnDisconnect` a we print a string to the output log (see figure 2.8.).
-
-![Blueprint BP_PSL_Demo, Event Graph with Teardownp](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
-*Figure 2.8.: Blueprint BP_PSL_Demo, Event Graph with Teardown*
 
 <div style='page-break-after: always'></div>
 
@@ -194,8 +192,6 @@ Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
 *Figure 2.9.: Mosquitto Broker as Windows Service*
-
-<div style='page-break-after: always'></div>
 
 ### 2.5. Android Debug Bridge
 
@@ -208,12 +204,12 @@ On the Android device enable USB Debugging mode (cp. [7]):
 > 5. Go in there and enable the `USB Debugging` mode option.
 > 6. Connect the Android device to the PC by USB cable.
 
-On the PC setup "Android Debug Bridge" ADB (cp. [7]):
+On the PC using an administrative PowerShell setup "Android Debug Bridge" ADB (cp. [7]):
 
-1. Launch an administrative PowerShell
-   1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.4.)
-   2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.5. and listing 2.6.)
-2. Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
+1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.4.)
+2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.5.)
+
+Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
 
 *Listing 2.4.: Use of Chocolatey to Install Android Debug Bridge*
 ```PowerShell
@@ -223,12 +219,6 @@ choco install adb
 *Listing 2.5.: Android Debug Bridge Startup*
 ```PowerShell
 adb reverse tcp:1883 tcp:1883
-```
-
-*Listing 2.6.: Android Debug Bridge Feedback*
-```PowerShell
-* daemon not running; starting now at tcp:5037
-* daemon started successfully
 ```
 
 <div style='page-break-after: always'></div>
@@ -259,9 +249,17 @@ Mount the Polar H10 sensor on the chest strap and wear the same. On the Android 
 
 <div style='page-break-after: always'></div>
 
-With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated, two topics are delivered: topic `psl/ecg` with a payload containing field `"ecg": [ ... ]` which delivers ECG values in microvolts [uV] (cp. listing 2.7.) and topic `psl/hr` where field ```"hr": 64``` corresponds to the heart rate in beats per minute (bpm) and field ```"rr": [ 938 ]``` corresponds to the RR interval in milliseconds [ms]. (cp. listing 2.8.). We consume the latter only.
+With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated, PSL publishes two topics:
 
-*Listing 2.7.: Topic psl/ecg, example Payload in JSON*
+* Topic `psl/ecg` (cp. listing 2.6.): delivers a JSON-Object as payload containing, among others
+  * a JSON-Field named `"ecg": [ ... ]`, a JSON-Array of ECG values in microvolts [uV]
+* Topic `psl/hr` (cp. listing 2.7.): delivers a JSON-Object as payload containing, among others
+  * a JSON-Field ```"hr": 64``` containing a JSON-Integer which corresponds to the heart rate in beats per minute (bpm)
+  * a JSON-Field ```"rr": [ 938 ]``` containing a JSON-Array of RR intervals in milliseconds [ms]
+
+We subscribe to the latter topic only.
+
+*Listing 2.6.: Topic psl/ecg, example JSON-Object Payload*
 ```json
 {
   "clientId": "MyPSL-01",
@@ -280,7 +278,7 @@ With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated
 }
 ```
 
-*Listing 2.8.: Topic psl/hr, example Payload in JSON*
+*Listing 2.7.: Topic psl/hr, example JSON-Object Payload*
 ```json
 {
   "clientId": "MyPSL-01",
@@ -298,9 +296,7 @@ With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated
 
 ## 3. Visualisation
 
-### 3.1. Messaging Startup
-
-In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE). The MQTT plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.1.).
+In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658; in the level editor to start Play-in-Editor (PIE) (see listing 3.1.).
 
 *Listing 3.1.: Output Log of Map_PSL_Demo starting PIE*
 ```
@@ -308,12 +304,31 @@ In Unreal Editor with Level `Map_PSL_Demo` open, click the `Play` button &#9658;
 LogWorld: Bringing World /Game/UEDPIE_0_Map_PSL_Demo.Map_PSL_Demo up for play (max tick rate 0)
 LogWorld: Bringing up level for play took: 0.000950
 LogOnline: OSS: Created online subsystem instance for: :Context_6
+[...]
+PIE: Server logged in
+PIE: Play in editor total start time 0.132 seconds.
+[...]
+```
+
+### 3.1. Messaging Startup
+
+On `EventBeginPlay` an MQTT-Client is created and connected (see figure 3.1.). The MQTT-Plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.2.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the UE MQTT-Client (see figure 3.2.).
+
+With event `OnConnect` &ndash; if the connection was accepted &ndash; the topic is subscribed and event `HeartbeatStandby` is called (cp. [section 3.1.1.](311-heartbeat-standby)). With event `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (cp. [section 3.1.2.](312-heartbeat-update)).
+
+![Blueprint BP_PSL_Demo, Event Graph Section 'Startup Messaging'](Docs/UEProjectHeartbeat-BP_PSL_Demo_Startup.png)
+*Figure 3.1.: Blueprint BP_PSL_Demo, Event Graph Section 'Startup Messaging'*
+
+<div style='page-break-after: always'></div>
+
+*Listing 3.2.: Output Log of Map_PSL_Demo starting PIE*
+```
+[...]
 LogMQTTCore: VeryVerbose: Created MQTTConnection for 127.0.0.1
 LogMQTTCore: Display: Created new Client, Num: 1
 LogMQTTCore: Verbose: Set State to: Connecting
 LogMQTTCore: Verbose: Queued Subscribe message with PacketId 1., and Topic Filter: 'psl/hr'
-PIE: Server logged in
-PIE: Play in editor total start time 0.132 seconds.
+[...]
 LogMQTTCore: Verbose: Copy outgoing operations to buffer
 LogMQTTCore: Verbose: Operations deferred: 2
 LogMQTTCore: Verbose: Processing incoming packets of size: 4
@@ -332,38 +347,50 @@ LogMQTTCore: Verbose: Operations deferred: 0
 [...]
 ```
 
-<div style='page-break-after: always'></div>
-
-Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the Unreal Engine MQTT client instance (see figure 3.2.).
-
 ![Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance](Docs/Screenshot-Wireshark-1883-connect.png)
 *Figure 3.2.: Wireshark Dissecting Port 1883, Connect Command from Unreal Engine MQTT Client Instance*
 
-### 3.2. Heartbeat Standby
+<div style='page-break-after: always'></div>
 
-With UE subscribing to an MQTT broker Blueprint `BP_PSL_Demo` calls event `HeartbeatStandby`, which starts a visual feedback by rotating the `HeartMesh` component and blinking the `TextRender` (see figures 3.1.1. and 3.1.2.).
+#### 3.1.1. Heartbeat Standby
+
+With event `OnConnect` the topic is subscribed and event `HeartbeatStandby` is called, which starts a visual feedback (see figure 3.3.): The `RotatingMovement` is activated and the `TextRenderVisibilityTimer` is started `looping` within `0.5` seconds calling event `TextRenderBlink` which switches the `TextRender` visibility on and off by a `FlipFlop`.
+
+As result the Mesh Component `HeartMesh` rotates and the TextRenderActor `TextRender` is blinking (see figures 3.4.1. and 3.4.2.).
+
+![Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Standby'](Docs/UEProjectHeartbeat-BP_PSL_Demo_HeartbeatStandby.png)
+*Figure 3.3.: Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Standby'*
 
 | ![106](Docs/HeartbeatStandby/106.png) | ![137](Docs/HeartbeatStandby/137.png) | ![152](Docs/HeartbeatStandby/152.png) | ![164](Docs/HeartbeatStandby/164.png) | ![183](Docs/HeartbeatStandby/183.png) | ![193](Docs/HeartbeatStandby/193.png) |
 |:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
-*Figure 3.1.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+*Figure 3.4.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Standby*
 
-![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
-*Figure 3.1.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby Mode*
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby](Docs/MapPSLDemoPIE-HeartbeatStandby.gif)
+*Figure 3.4.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Standby*
 
 <div style='page-break-after: always'></div>
 
-### 3.3. Heartbeat Update
+#### 3.1.2. Heartbeat Update
 
-With receiving MQTT messages Blueprint `BP_PSL_Demo` starts udating the visual feedback by calling event `HeartbeatUpdate`, the heart bumps frequently as given by RR-interval and the TextRender shows the heart rate (see figures 3.2.1 and 3.2.2. and listing 3.2.).
+With event `OnMessage` the received message payload is evaluated by calling event `HeartbeatUpdate`, which updates the visual feedback (see figure 3.5.): The RR interval [ms] from JSON-Field `rr` is converted to [Hz] and is set as `HeartbeatTimeline` play rate. The HR value from JSON-Field `hr` is set to `TextRender`.
+
+As result the Mesh-Component `HeartMesh` bumps frequently as given by RR interval and the TextRenderActor `TextRender` shows the heart rate (see figures 3.6.1. and 3.6.2.).
+
+![Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Update'](Docs/UEProjectHeartbeat-BP_PSL_Demo_HeartbeatUpdate.png)
+*Figure 3.5.: Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Update'*
 
 | ![0752](Docs/HeartbeatUpdate/0752.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![1671](Docs/HeartbeatUpdate/1671.png) | ![2983](Docs/HeartbeatUpdate/2983.png) | ![4304](Docs/HeartbeatUpdate/4304.png) | ![5616](Docs/HeartbeatUpdate/5616.png) |
 |:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
-*Figure 3.2.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Update Mode*
+*Figure 3.6.1.: Screenshots of Map_PSL_Demo PIE, Heartbeat Update*
 
-![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
-*Figure 3.2.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update Mode*
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
+*Figure 3.6.2.: Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update*
 
-*Listing 3.2.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
+<div style='page-break-after: always'></div>
+
+With event `OnMessage` the received message payload is printed to output log (see listing 3.3.).
+
+*Listing 3.3.: Output Log of Map_PSL_Demo running PIE and logging the received Payloads*
 ```
 [...]
 LogMQTTCore: Verbose: Processing incoming packets of size: 157
@@ -391,26 +418,28 @@ LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
 [...]
 ```
 
-### 3.4. Messaging Teardown
+<div style='page-break-after: always'></div>
 
-With stopping PIE the MQTT-Client disconnects (see listing 3.3.).
+### 3.2. Messaging Teardown
 
-*Listing 3.3.: Output Log of Map_PSL_Demo stopping PIE*
+With stopping PIE, on `EventEndPlay` the topic is unsubscribed (see figure 3.7.). With event `HeartbeatDeactivate` the Mesh Component `HeartMesh` and the TextRenderActor animation is stopped and reset (see figure 3.8.). Then the MQTT-Client disconnects, `OnDisconnect` a message is printed to the output log (see listing 3.4.).
+
+![Blueprint BP_PSL_Demo, Event Graph Section 'Teardown'](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
+*Figure 3.7.: Blueprint BP_PSL_Demo, Event Graph Section 'Teardown'*
+
+![Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Deactivate'](Docs/UEProjectHeartbeat-BP_PSL_Demo_HeartbeatDeactivate.png)
+*Figure 3.8.: Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Deactivate'*
+
+*Listing 3.4.: Output Log of Map_PSL_Demo stopping PIE*
 ```
 [...]
 LogWorld: BeginTearingDown for /Game/UEDPIE_0_Map_PSL_Demo
 LogMQTTCore: Verbose: Set State to: Disconnecting
-LogWorld: UWorld::CleanupWorld for Map_PSL_Demo, bSessionEnded=true, bCleanupResources=true
-LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
-LogPlayLevel: Display: Shutting down PIE online subsystems
-LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[...]
 LogMQTTCore: Verbose: Copy outgoing operations to buffer
 LogMQTTCore: Verbose: Operations deferred: 1
 LogMQTTCore: Verbose: Set State to: Disconnected
-LogAudio: Display: Audio Device unregistered from world 'None'.
-LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=5
-LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=5
-LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[...]
 LogMQTTCore: Verbose: Set State to: Stopping
 LogMQTTCore: Verbose: Abandoning Operations
 LogMQTTCore: Verbose: Abandoning Operations
@@ -426,7 +455,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 
 * ADB &mdash; Android Debug Bridge
 * BLE &mdash; Bluetooth Low Energy
-* BPM &mdash; Beats per Minute
+* bpm &mdash; Beats per Minute
 * ECG &mdash; Electrocardiogram
 * HR &mdash; Heart Rate
 * HRM &mdash; Heart Rate Monitor
@@ -437,7 +466,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 * M2M &mdash; Machine to Machine
 * MQTT &mdash; Message Queuing Telemetry Transport
 * PIE &mdash; Play-in-Editor
-* POC &mdash; Proof-of-Concept
+* PoC &mdash; Proof-of-Concept
 * PS &mdash; PowerShell
 * PSL &mdash; Polar Sensor Logger
 * QoS &mdash; Quality of Service
@@ -449,7 +478,7 @@ LogMQTTCore: VeryVerbose: Destroyed MQTTConnection at 127.0.0.1
 
 ### Glossary
 
-#### MQTT &ndash; Quality of Service QoS
+#### MQTT &ndash; Quality of Service
 
 > *The Quality of Service (QoS) level is an agreement between the sender of a message and the receiver of a message that defines the guarantee of delivery for a specific message. There are 3 QoS levels in MQTT:*
 >
@@ -497,7 +526,7 @@ The RR interval RRI is an interbeat interval IBI, more precisely the time elapse
 * [9.1] HiveMQ Team: **Quality of Service (QoS) 0,1, & 2 MQTT Essentials: Part 6**. February 16, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
 * [9.2] HiveMQ Team: **Retained Messages - MQTT Essentials: Part 8**. March 2, 2015. Online: [https://www.hivemq.com/blog/mqtt-essentials-part-8-retained-messages/](https://www.hivemq.com/blog/mqtt-essentials-part-8-retained-messages/)
 * [10] **Heart Rate Variability**. In: Website of Kubios Oy, Section "HRV Resources". Online: [https://www.kubios.com/about-hrv/](https://www.kubios.com/about-hrv/)
-* [11]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/rr-interval)
+* [11]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/RR-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/RR-interval)
 * [12] Mike Cadogan: **R wave Overview**. February 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
 
 ### B. Readings
