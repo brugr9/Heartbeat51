@@ -6,6 +6,8 @@
 
 ---
 
+![Animation Screenshot of Map_PSL_Demo PIE, Heartbeat Update](Docs/MapPSLDemoPIE-HeartbeatUpdate.gif)
+
 ![UE Project Heartbeat in Epic Games Launcher](Docs/UEProjectHeartbeat-EpicGamesLauncher.png "UE Project Heartbeat in Epic Games Launcher")
 
 Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
