@@ -38,7 +38,7 @@ An Unreal&reg; Engine project as proof-of-concept for receiving physiological da
   * [2.2. Wireshark](#22-wireshark)
   * [2.3. Unreal Engine](#23-unreal-engine)
     * [2.3.1. Plugin MQTT](#231-plugin-mqtt)
-    * [2.3.2. MQTT Subscription](#232-mqtt-subscription)
+    * [2.3.2. Demo Map and Demo Blueprint Overview](#232-demo-map-and-demo-blueprint-overview)
   * [2.4. Mosquitto](#24-mosquitto)
   * [2.5. Android Debug Bridge](#25-android-debug-bridge)
   * [2.6. Polar Sensor Logger](#26-polar-sensor-logger)
@@ -126,27 +126,32 @@ Clone UE project "Heartbeat" using git, e.g., by ```git clone https://github.com
 
 #### 2.3.1. Plugin MQTT
 
-UE project "Heartbeat" makes use of built-in IOT plugin "MQTT" (see figure 2.2.). Note: With UE 5.1 as of January 2023, the plugin is Beta and is not yet documented.
+The UE Heartbeat project uses the built-in IOT MQTT plugin (see Figure 2.2.1. and 2.2.2.). Note: As of UE 5.1, the plugin is beta and not yet documented.
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
-*Figure 2.2.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
+*Figure 2.2.1.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
 
-#### 2.3.2. MQTT Subscription
+![ScreenshotPlugin](Docs/ProjectSettings_-_PluginMQTT.png)
+*Figure 2.2.2.: Unreal Engine Project Settings, Plugins - MQTT*
 
-Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable `TextRender` as Object Reference (see figure 2.3.).
+<div style='page-break-after: always'></div>
+
+#### 2.3.2. Demo Map and Demo Blueprint Overview
+
+Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable `TextRender` as Object Reference (see Figure 2.3.).
 
 ![Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
 *Figure 2.3.: Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport*
 
 <div style='page-break-after: always'></div>
 
-Blueprint `BP_PSL_Demo` has components and variables as follows (see figure 2.4.):
+Blueprint `BP_PSL_Demo` has components and variables as follows (see Figure 2.4.):
 
 * Scene Components:
   * Static Mesh Component `HeartMesh`
 * Actor Components:
   * Rotating Movement Component
-  * Timeline Component `HeartbeatTimeline` (see figure 2.5.):
+  * Timeline Component `HeartbeatTimeline` (see Figure 2.5.):
     * External Curve: Default Asset Curve Template `PulseOut`
     * Lenght: `1.00`
     * Looping: `on`
@@ -165,7 +170,7 @@ Blueprint `BP_PSL_Demo` has components and variables as follows (see figure 2.4.
 
 <div style='page-break-after: always'></div>
 
-Blueprint `BP_PSL_Demo` has events as follows (see figure 2.6.):
+Blueprint `BP_PSL_Demo` has events as follows (see Figure 2.6.):
 
 * Gameplay: EventBeginPlay, EventEndPlay
 * Messaging: OnConnect, OnDisconnect, OnMessage
@@ -174,7 +179,7 @@ Blueprint `BP_PSL_Demo` has events as follows (see figure 2.6.):
   * Helpers: TextRenderBlink, HeartbeatReset
 * Testing: Testing01, Testing02, Testing03
 
-Blueprint `BP_PSL_Demo` has Event Graph sections as follows (see figure 2.6.):
+Blueprint `BP_PSL_Demo` has Event Graph sections as follows (see Figure 2.6.):
 
 * 'Startup Messaging' (color green, cp. section 3.1.)
 * 'Teardown Messaging' (color violet, cp. section 3.2.)
@@ -188,7 +193,7 @@ Blueprint `BP_PSL_Demo` has Event Graph sections as follows (see figure 2.6.):
 
 ### 2.4. Mosquitto
 
-Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto Broker" (see figure 2.9.).
+Install Mosquitto MQTT-Broker (cp. [6]) and start the Windows Service "Mosquitto Broker" (see Figure 2.9.).
 
 ![Screenshot Mosquitto Broker as Windows Service](Docs/ScreenshotMosquittoWindowsService.png)
 *Figure 2.9.: Mosquitto Broker as Windows Service*
@@ -312,7 +317,7 @@ PIE: Play in editor total start time 0.132 seconds.
 
 ### 3.1. Messaging Startup
 
-On `EventBeginPlay` an MQTT-Client is created and connected (see figure 3.1.). The MQTT-Plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.2.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the UE MQTT-Client (see figure 3.2.).
+On `EventBeginPlay` an MQTT-Client is created and connected (see Figure 3.1.). The MQTT-Plugin writes to the output log with custom log category `LogMQTTCore` (see listing 3.2.). Wireshark dissecting port 1883 lists, e.g., the `Connect Command` sent from the UE MQTT-Client (see Figure 3.2.).
 
 With event `OnConnect` &ndash; if the connection was accepted &ndash; the topic is subscribed and event `HeartbeatStandby` is called (cp. section 3.1.1.). With event `OnMessage` the received message is evaluated by calling event `HeartbeatUpdate` (cp. section 3.1.2.).
 
@@ -354,9 +359,9 @@ LogMQTTCore: Verbose: Operations deferred: 0
 
 #### 3.1.1. Heartbeat Standby
 
-With event `OnConnect` the topic is subscribed and event `HeartbeatStandby` is called, which starts a visual feedback (see figure 3.3.): The `RotatingMovement` is activated and the `TextRenderVisibilityTimer` is started `looping` within `0.5` seconds calling event `TextRenderBlink` which switches the `TextRender` visibility on and off by a `FlipFlop`.
+With event `OnConnect` the topic is subscribed and event `HeartbeatStandby` is called, which starts a visual feedback (see Figure 3.3.): The `RotatingMovement` is activated and the `TextRenderVisibilityTimer` is started `looping` within `0.5` seconds calling event `TextRenderBlink` which switches the `TextRender` visibility on and off by a `FlipFlop`.
 
-As result the Mesh Component `HeartMesh` rotates and the TextRenderActor `TextRender` is blinking (see figures 3.4.1. and 3.4.2.).
+As result the Mesh Component `HeartMesh` rotates and the TextRenderActor `TextRender` is blinking (see Figures 3.4.1. and 3.4.2.).
 
 ![Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Standby'](Docs/UEProjectHeartbeat-BP_PSL_Demo_HeartbeatStandby.png)
 *Figure 3.3.: Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Standby'*
@@ -372,9 +377,9 @@ As result the Mesh Component `HeartMesh` rotates and the TextRenderActor `TextRe
 
 #### 3.1.2. Heartbeat Update
 
-With event `OnMessage` the received message payload is evaluated by calling event `HeartbeatUpdate`, which updates the visual feedback (see figure 3.5.): The RR interval [ms] from JSON-Field `rr` is converted to [Hz] and is set as `HeartbeatTimeline` play rate. The HR value from JSON-Field `hr` is set to `TextRender`.
+With event `OnMessage` the received message payload is evaluated by calling event `HeartbeatUpdate`, which updates the visual feedback (see Figure 3.5.): The RR interval from JSON-Field `rr` in Milliseconds [ms] is converted to [Hz] and is set as `HeartbeatTimeline` play rate. The HR value from JSON-Field `hr` is set to `TextRender`.
 
-As result the Mesh-Component `HeartMesh` bumps frequently as given by RR interval and the TextRenderActor `TextRender` shows the heart rate (see figures 3.6.1. and 3.6.2.).
+As result the Mesh-Component `HeartMesh` bumps frequently as given by RR interval and the TextRenderActor `TextRender` shows the heart rate (see Figures 3.6.1. and 3.6.2.).
 
 ![Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Update'](Docs/UEProjectHeartbeat-BP_PSL_Demo_HeartbeatUpdate.png)
 *Figure 3.5.: Blueprint BP_PSL_Demo, Event Graph Section 'Heartbeat Update'*
@@ -422,7 +427,7 @@ LogBlueprintUserMessages: [BP_PSL_Demo_C_1] {
 
 ### 3.2. Messaging Teardown
 
-With stopping PIE, on `EventEndPlay` the topic is unsubscribed (see figure 3.7.). With event `HeartbeatDeactivate` the Mesh Component `HeartMesh` and the TextRenderActor animation is stopped and reset (see figure 3.8.). Then the MQTT-Client disconnects, `OnDisconnect` a message is printed to the output log (see listing 3.4.).
+With stopping PIE, on `EventEndPlay` the topic is unsubscribed (see Figure 3.7.). With event `HeartbeatDeactivate` the Mesh Component `HeartMesh` and the TextRenderActor animation is stopped and reset (see Figure 3.8.). Then the MQTT-Client disconnects, `OnDisconnect` a message is printed to the output log (see listing 3.4.).
 
 ![Blueprint BP_PSL_Demo, Event Graph Section 'Teardown'](Docs/UEProjectHeartbeat-BP_PSL_Demo_Teardown.png)
 *Figure 3.7.: Blueprint BP_PSL_Demo, Event Graph Section 'Teardown'*
