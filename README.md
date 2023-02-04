@@ -130,7 +130,7 @@ Clone UE project "Heartbeat" using git, e.g., by ```git clone https://github.com
 
 #### 2.3.1. Plugin MQTT
 
-The UE Heartbeat project uses the plugin "Built-In > IOT > MQTT" (see Figure 2.2.1.). Note: As of UE 5.1, the plugin is beta and not yet documented. In the "Project Settings > Plugin > MQTT"  we use the "Connection > Default URL" values Host `localhost`, Port `1883` and Scheme `MQTT`. To be able to process data from a maximum heart rate of 180 bpm resp. from 180 messages per minute, we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 360 messages per minute, which corresponds to $ \frac{ 360 \text{ messages per minute}}{ 60 \text{ seconds per minute}} = 6 \text{ messages per second} $ ($ 6 \text{ Hz} $). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next $ 10 \text{ Hz } $, i.e. `10` messages per second. (cp. figure 2.2.2.).
+The UE Heartbeat project uses the plugin "Built-In > IOT > MQTT" (see Figure 2.2.1.). Note: As of UE 5.1, the plugin is beta and not yet documented. In the "Project Settings > Plugin > MQTT"  we use the "Connection > Default URL" values Host `localhost`, Port `1883` and Scheme `MQTT`. To be able to process data from a maximum heart rate of 180 bpm resp. from 180 messages per minute, we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 360 messages per minute, which corresponds to 6 messages per second (6Hz). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next 10Hz, i.e. `10` messages per second. (cp. figure 2.2.2.).
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.2.1.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
