@@ -130,10 +130,15 @@ Clone UE project "Heartbeat" using git, e.g., by ```git clone https://github.com
 
 #### 2.3.1. Plugin MQTT
 
-The UE Heartbeat project uses the plugin "Built-In > IOT > MQTT" (see Figure 2.2.1.). Note: As of UE 5.1, the plugin is beta and not yet documented. In the "Project Settings > Plugin > MQTT"  we use the "Connection > Default URL" values Host `localhost`, Port `1883` and Scheme `MQTT`. To be able to process data from a maximum heart rate of 180 bpm resp. from 180 messages per minute, we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 360 messages per minute, which corresponds to 6 messages per second (6Hz). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next 10Hz, i.e. `10` messages per second. (cp. figure 2.2.2.).
+In the UE Heartbeat project we use the plugin "Built-In > IOT > MQTT" (see Figure 2.2.1.). Note: As of UE 5.1, the plugin is beta and not yet documented.
 
 ![ScreenshotPlugin](Docs/ScreenshotPlugin.png)
 *Figure 2.2.1.: Unreal Engine Plugins Browser Tab with Built-in IOT Plugin "MQTT"*
+
+In the "Project Settings > Plugin > MQTT"
+
+* we use the "Connection > Default URL" values Host `localhost`, Port `1883` and Scheme `MQTT`.
+* To be able to process data from a maximum heart rate of 180 bpm or from 180 messages per minute resp., we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 360 messages per minute, which corresponds to 6 messages per second (6Hz). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next 10Hz, i.e. `10` messages per second. (cp. figure 2.2.2.).
 
 ![ScreenshotPlugin](Docs/ProjectSettings_-_PluginMQTT.png)
 *Figure 2.2.2.: Unreal Engine Project Settings, Plugins - MQTT*
@@ -142,7 +147,7 @@ The UE Heartbeat project uses the plugin "Built-In > IOT > MQTT" (see Figure 2.2
 
 #### 2.3.2. Demo Map and Demo Blueprint Overview
 
-Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a TextRenderActor instance, which is assigned to the `BP_PSL_Demo` variable `TextRender` as Object Reference (see figure 2.3.).
+Map `Map_PSL_Demo` holds a Blueprint `BP_PSL_Demo` instance and additionally a `TextRenderActor` instance, which is assigned to the `BP_PSL_Demo` variable `TextRender` as Object Reference (see figure 2.3.).
 
 ![Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport](Docs/UEProjectHeartbeat-Map_PSL_Demo.png)
 *Figure 2.3.: Map_PSL_Demo with instances of Blueprint BP_PSL_Demo and TextRenderActor in the Outliner and in the Viewport*
@@ -266,7 +271,7 @@ With Polar Sensor Logger main tab entry "SDK data select" option *ECG* activated
   * a JSON-Field ```"hr": 64``` containing a JSON-Integer which corresponds to the heart rate in beats per minute (bpm)
   * a JSON-Field ```"rr": [ 938 ]``` containing a JSON-Array of RR intervals in milliseconds [ms]
 
-We subscribe to the latter topic only.
+We will consume the latter topic `psl/hr` only.
 
 *Listing 2.6.: Topic psl/ecg, example JSON-Object Payload*
 ```json
