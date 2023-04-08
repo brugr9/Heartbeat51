@@ -16,7 +16,7 @@ Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
 ## Description
 
-An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor.
+An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor. A conceivable application could be an exergame or a software for a physical eSports tournament like *Arena Games Triathlon&trade;*.
 
 * Index Terms:
   * Physiological Measuring, Electrocardiogram, Heart Rate
@@ -80,12 +80,12 @@ We use system components as follows (for the specific data flow see Listing 1.2.
 
 * Data Producer:
   * Polar H10 Heart Rate (HR) Sensor with Chest Strap (cp. [1])
-  * Android App "Polar Sensor Logger" (PSL) (cp. [2])
-* MQTT-Broker "Mosquitto" as a Windows Service (cp. [6])
-* "Unreal Engine" MQTT-Client from IOT-plugin "MQTT"
+  * Polar Sensor Logger (PSL) Android App (cp. [2])
+* MQTT-Broker: Mosquitto as a Windows Service (cp. [6])
+* MQTT-Client: Unreal Engine IoT plugin "MQTT"
 
 *Listing 1.2.: Specific Data Flow*
-> Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; **Unreal Engine**
+> Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; Unreal Engine **IoT-Plugin MQTT**
 
 The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore configure the firewall, use Wireshark adn Android Debug Bridge&mdash;and on Android we setup Polar Sensor Logger.
 
@@ -556,6 +556,7 @@ The RR interval RRI is an interbeat interval IBI, more precisely the time elapse
 
 ### D. Attribution
 
+* The word mark Arena Games Triathlon (AGT) is a trademark of Super League Triathlon Ltd (SLT). Online: [https://superleaguetriathlon.com/triathlon-race/arenagames/](https://superleaguetriathlon.com/triathlon-race/arenagames/)
 * The word mark Unreal and its logo are Epic Games, Inc. trademarks or registered trademarks in the US and elsewhere.
 * The word mark Polar and its logos are trademarks of Polar Electro Oy.
 * Android is a trademark of Google LLC.
