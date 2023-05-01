@@ -138,7 +138,7 @@ In the UE Heartbeat project we use the plugin "Built-In > IOT > MQTT" (see Figur
 In the "Project Settings > Plugin > MQTT"
 
 * we use the "Connection > Default URL" values Host `localhost`, Port `1883` and Scheme `MQTT`.
-* To be able to process data from a maximum heart rate of 180 bpm or from 180 messages per minute resp., we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 360 messages per minute, which corresponds to 6 messages per second (6Hz). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next 10Hz, i.e. `10` messages per second. (cp. figure 2.2.2.).
+* To be able to process data from a maximum heart rate of 210 bpm or from 210 messages per minute resp., we set the "Bandwith > Publish Rate" to double (Nyquist–Shannon sampling theorem), i.e. 420 messages per minute, which corresponds to 7 messages per second (7Hz). To ensure that the transmission of MQTT meta data is also guaranteed, we round up to the next 10Hz, i.e. `10` messages per second. (cp. figure 2.2.2.).
 
 ![ScreenshotPlugin](Docs/ProjectSettings_-_PluginMQTT.png)
 *Figure 2.2.2.: Unreal Engine Project Settings, Plugins - MQTT*
