@@ -87,7 +87,7 @@ We use system components as follows (for the specific data flow see Listing 1.2.
 *Listing 1.2.: Specific Data Flow*
 > Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; Unreal Engine **IoT-Plugin MQTT**
 
-The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore configure the firewall, use Wireshark adn Android Debug Bridge&mdash;and on Android we setup Polar Sensor Logger.
+The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore configure the firewall, use Wireshark and Android Debug Bridge, on Android we setup Polar Sensor Logger.
 
 <div style='page-break-after: always'></div>
 
@@ -95,7 +95,7 @@ The following shows the setup in reverse order of the data flow: Unreal Engine a
 
 ### 2.1. Firewall
 
-MQTT standard port is 1883, we will use TCP as transport. In the Windows Defender Firewall allow TCP port 1883, e.g., by using an administrative PowerShell (see listing 2.1.).
+MQTT standard port is 1883, we will use TCP as transport. In the Windows Defender Firewall we allow TCP port 1883, e.g., by using an administrative PowerShell (see listing 2.1.).
 
 *Listing 2.1.: Firewall Rule "Allow TCP Port 1883"*
 ```PowerShell
