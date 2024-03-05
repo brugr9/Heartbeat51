@@ -16,7 +16,7 @@ Unreal Engine Project "Heartbeat" &mdash; Heart Rate Monitoring Integration
 
 ## Description
 
-An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor. A conceivable application could be an exergame or a software for a physical eSports tournament like *Arena Games Triathlon&trade;*.
+An Unreal&reg; Engine project as proof-of-concept for receiving physiological data from Polar&reg; H10 heart rate monitor. A conceivable application could be an exercise game or a physical eSports tournament like «Arena Games Triathlon»&trade; (cp. [13]).
 
 * Index Terms:
   * Physiological Measuring, Electrocardiogram, Heart Rate
@@ -542,6 +542,7 @@ The RR interval RRI is an interbeat interval IBI, more precisely the time elapse
 * [10] **Heart Rate Variability**. In: Website of Kubios Oy, Section "HRV Resources". Online: [https://www.kubios.com/about-hrv/](https://www.kubios.com/about-hrv/)
 * [11]  **RR Interval**. In: ScienceDirect. From: Principles and Practice of Sleep Medicine (Fifth Edition), 2011. Online: [https://www.sciencedirect.com/topics/nursing-and-health-professions/RR-interval](https://www.sciencedirect.com/topics/nursing-and-health-professions/RR-interval)
 * [12] Mike Cadogan: **R wave Overview**. February 4, 2021. In: Live In The Fastlane &ndash; ECG Library, ECG Basics. Online: [https://litfl.com/r-wave-ecg-library/](https://litfl.com/r-wave-ecg-library/)
+* [13] SRF, 13.03.2023: [Ein Triathlon der besonderen Art: «Arena Games» machen Halt in Sursee](https://www.srf.ch/play/tv/sport-clip/video/ein-triathlon-der-besonderen-art-arena-games-machen-halt-in-sursee?urn=urn:srf:video:d053f387-29dd-45a9-998b-0ee5b72c88a9)
 
 ### B. Readings
 
