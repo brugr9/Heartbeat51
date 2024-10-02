@@ -87,7 +87,7 @@ We use system components as follows (for the specific data flow see Listing 1.2.
 *Listing 1.2.: Specific Data Flow*
 > Polar H10 &ndash;(*Polar BLE SDK*)&rarr; **Polar Sensor Logger** &ndash;(*MQTT*)&rarr; **Mosquitto** &ndash;(*MQTT*)&rarr; Unreal Engine **IoT-Plugin MQTT**
 
-The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;were we furthermore configure the firewall, use Wireshark and Android Debug Bridge, on Android we setup Polar Sensor Logger.
+The following shows the setup in reverse order of the data flow: Unreal Engine and Mosquitto on Windows&mdash;where we furthermore configure the firewall, use Wireshark and Android Debug Bridge, on Android we setup Polar Sensor Logger.
 
 <div style='page-break-after: always'></div>
 
