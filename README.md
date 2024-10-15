@@ -531,6 +531,8 @@ The RR interval RRI is an interbeat interval IBI, more precisely the time elapse
 
 * [1] Polar Electro: **Polar H10**. Heart Rate Sensor with Chest Strap, Online: [https://www.polar.com/en/sensors/h10-heart-rate-sensor](https://www.polar.com/en/sensors/h10-heart-rate-sensor)
 * [2] Jukka Happonen: **Polar Sensor Logger**. App on Google Play, Online: [https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger)
+  * [2.2.1] **Polar Sensor Logger APK** for Android. Softonic: [https://polar-sensor-logger.en.softonic.com/android](https://polar-sensor-logger.en.softonic.com/android)
+  * [2.2.2] Alexander Mundt: **Alte App-Versionen laden in Android \& auf dem iPhone: So geht's**. MediaMarkt Magazin, 5. Juli 2023. Online: [https://www.mediamarkt.de/de/content/it-informatik/software-apps/alte-app-versionen-laden#alte-app-versionen-laden-auf-android-smartphone](https://www.mediamarkt.de/de/content/it-informatik/software-apps/alte-app-versionen-laden#alte-app-versionen-laden-auf-android-smartphone)
 * [3] **Chocolatey** &ndash; The Package Manager for Windows. Online: [https://chocolatey.org/](https://chocolatey.org/)
 * [4] Abhinaya Balaji: **Dissecting MQTT using Wireshark**. In: Blog Post, July 6, 2017. Catchpoint Systems, Inc. Online: [https://www.catchpoint.com/blog/wireshark-mqtt](https://www.catchpoint.com/blog/wireshark-mqtt)
 * [5] Wireshark Documentation: **Display Filter Reference: MQ Telemetry Transport Protocol**, Online: [https://www.wireshark.org/docs/dfref/m/mqtt.html](https://www.wireshark.org/docs/dfref/m/mqtt.html)
