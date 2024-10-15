@@ -223,8 +223,6 @@ On the PC using an administrative PowerShell setup "Android Debug Bridge" ADB (c
 1. Install "Android Debug Bridge", e.g., by using Chocolatey packet manager (cp. [3], see listing 2.4.)
 2. Startup the "Android Debug Bridge" with mapping TCP port 1883 bidirectional (cp. [8], see listing 2.5.)
 
-Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`
-
 *Listing 2.4.: Use of Chocolatey to Install Android Debug Bridge*
 ```PowerShell
 choco install adb
@@ -235,13 +233,15 @@ choco install adb
 adb reverse tcp:1883 tcp:1883
 ```
 
+Back on the Andorid, a prompt "Allow USB Debugging" is shown, accept by hitting `OK`.
+
 <div style='page-break-after: always'></div>
 
 ### 2.6. Polar Sensor Logger
 
 Mount the Polar H10 sensor on the chest strap and wear the same. On the Android device ...
 
-1. Install the "Polar Sensor Logger" App (cp. [2])
+1. Install the "Polar Sensor Logger" App (cp. [2]; or [2.2.1] and [2.2.2])
 2. Activate Bluetooth
 3. Activate Location Service
 4. Launch the "Polar Sensor Logger" App, in the main tab configure as follows:
